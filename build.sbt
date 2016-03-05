@@ -31,8 +31,6 @@ libraryDependencies ++= Seq(
     )
   )
 
-libraryDependencies += "javax.media" % "jai_core" % "1.1.3"
-
 libraryDependencies += "commons-collections" % "commons-collections" % "3.2.1"
 
 libraryDependencies += "org.scalanlp" %% "breeze" % "0.11.2"

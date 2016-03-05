@@ -1,6 +1,5 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.model
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.model.Rectangle
 
 /**
  * Created by sagnik on 3/4/16.

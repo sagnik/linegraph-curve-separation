@@ -1,10 +1,10 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.impl
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
 import breeze.linalg._
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.model.{SVGPath, Rectangle}
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.impl.SVGPathfromDString
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.model.{MovePath, CordPair}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{SVGPath, Rectangle}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.SVGPathfromDString
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.{MovePath, CordPair}
 
 import scala.None
 

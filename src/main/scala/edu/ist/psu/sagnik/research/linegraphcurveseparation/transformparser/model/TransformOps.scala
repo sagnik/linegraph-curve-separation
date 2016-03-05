@@ -1,4 +1,4 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.transformparser.model
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.model
 
 /**
  * Created by sagnik on 12/9/15.

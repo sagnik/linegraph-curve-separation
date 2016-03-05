@@ -1,7 +1,7 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.impl
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.model.Rectangle
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.model._
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.Rectangle
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model._
 
 
 /**

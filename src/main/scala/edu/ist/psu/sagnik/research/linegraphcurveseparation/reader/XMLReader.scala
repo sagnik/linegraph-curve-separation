@@ -1,4 +1,4 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.reader
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.reader
 
 import java.io.File
 

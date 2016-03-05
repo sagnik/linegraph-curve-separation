@@ -1,4 +1,4 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.model
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.model
 
 import scala.language.implicitConversions
 /**

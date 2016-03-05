@@ -1,9 +1,9 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.impl
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.model.{PathGroups, SVGGroup, SVGPath}
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.impl.SVGPathfromDString
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.reader.XMLReader
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.transformparser.impl.TransformParser
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{PathGroups, SVGGroup, SVGPath}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.SVGPathfromDString
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.impl.TransformParser
 
 import scala.xml.{Node, NodeSeq}
 
@@ -16,34 +16,19 @@ object SVGPathExtract {
 
   def apply(fileLoc:String)=getPaths(XMLReader(fileLoc),GroupExtract.apply(fileLoc))
 
-  def getPaths(xmlContent:scala.xml.Elem, svgGroups:Seq[SVGGroup]):Seq[SVGPath]= {
+  def getPaths(xmlContent:scala.xml.Elem, svgGroups:Seq[SVGGroup]):Unit= {
 
-    val topLevelPaths = xmlContent \ "path"
-    //topLevelPaths.foreach(x=>println(s"[top level path]: ${x}"))
-    val gIdMap=getGroupParents((xmlContent \ "g"),(xmlContent \\ "g").map(a=>a \@ "id").groupBy(x=>x).map{case (k,v) => (k,Seq.empty[String]) })
+    //There's exactly one group with a translate operation, but that might not have an ID.
+    val gid=if (((xmlContent \ "g")\@ "id").isEmpty) "g1" else ((xmlContent \ "g")\@ "id")
+    println(gid)
 
-    //gIdMap.foreach(x=>println(s"[group number]: ${x._1} [parent group]: ${x._2}"))
+    (xmlContent \ "g").foreach(x=>println(x.toString))
 
-    val lowerLevelPaths=iterateOverGroups(xmlContent \ "g",Seq.empty[PathGroups],gIdMap)
 
-    val topLevelSVGPaths=
-      topLevelPaths.map(x =>
-        SVGPath(
-          x.attribute("id") match {
-            case Some(idExists) => idExists.text
-            case _ => "noID"
-          },
-          pdContent = x.attribute("d") match {case Some(con)=>con.text case _ => ""},
-          pContent=x.toString(),
-          pOps = SVGPathfromDString.getPathCommands(x.attribute("d") match {case Some(con)=>con.text case _ => ""}),
-          groups = Seq.empty[SVGGroup],
-          transformOps=TransformParser(x \@ "transform"),
-          bb=None
-        )
-      )
-
-    val lowerLevelSVGpaths=
-      lowerLevelPaths.map(x =>
+/*
+    val SVGCurvepaths=
+      (xmlContent \ "g").fil
+        map(x =>
         SVGPath(
           x.path.attribute("id") match {
             case Some(idExists) => idExists.text
@@ -61,6 +46,7 @@ object SVGPathExtract {
         )
       )
     (topLevelSVGPaths ++ lowerLevelSVGpaths).map(x=>SVGPathBB.apply(x))
+*/
   }
 
   def iterateOverGroups(tlGs:NodeSeq,pathGIDs:Seq[PathGroups],gIdMap:Map[String,Seq[String]]):Seq[PathGroups]=

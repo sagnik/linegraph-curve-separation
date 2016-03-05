@@ -1,6 +1,6 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.impl
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.model._
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model._
 
 /**
  * Created by sagnik on 12/8/15.

@@ -11,7 +11,7 @@ class SVGGroupExtractTest extends FunSpec {
 
 
   describe("testing the SVG output by printing") {
-    import DataLocation._
+    import edu.ist.psu.sagnik.research.linegraphcurveseparation.test.DataLocation._
     it("should print the group info.") {
       val results=GroupExtract(svgFileLoc)
       results.foreach(x=>println(s"[group id]: ${x.id} [group transform content]: ${x.gtContent}"))

@@ -4,16 +4,17 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.test
  * Created by sagnik on 12/23/15.
  */
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.SVGPathExtract
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{SVGPathExtract}
 import org.scalatest.FunSpec
 
 class SVGPathOutputTest extends FunSpec {
 
   describe("testing the SVG output by printing") {
-    import DataLocation._
+    import edu.ist.psu.sagnik.research.linegraphcurveseparation.test.DataLocation._
     it("should print the path info.") {
       val results=SVGPathExtract(svgFileLoc)
       //results.foreach(x=>println(x.pContent))
+/*
       results.foreach(
         x=>println(s"[path id]: ${x.id}, [pconent]: ${x.pContent}" +
           s"[pathbb ]: ${
@@ -24,6 +25,7 @@ class SVGPathOutputTest extends FunSpec {
           }" +
           s"")
       )
+*/
 
       //results.filter(p=>"path170".equals(p.id)).foreach(x=>println(s"[path content]: ${x.pdContent} [pathcommands]: ${x.pOps} [pathbb] ${x.bb}"))
 

@@ -1,7 +1,7 @@
-package edu.ist.psu.sagnik.research.inkscapesvgprocessing.model
+package edu.ist.psu.sagnik.research.linegraphcurveseparation.model
 
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.pathparser.model.PathCommand
-import edu.ist.psu.sagnik.research.inkscapesvgprocessing.transformparser.model.TransformCommand
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.PathCommand
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.model.TransformCommand
 
 import scala.xml.{Node, Elem}
 
