@@ -1,5 +1,7 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.model
 
+import scala.xml.NodeSeq
+
 
 /**
  * Created by sagnik on 3/4/16.
@@ -16,4 +18,5 @@ case class PathStyle(fill:String,
                      strokeOpacity:Float,
                      fillOpacity:Float)
 
-case class SVGPathCurve(bb:Rectangle,pathDString:String,pathStyle:PathStyle,pathWholeString:String)
+case class SVGPathXML(svgPath:SVGPath,styleXML:NodeSeq)
+case class SVGPathCurve(svgPath:SVGPath,pathStyle:PathStyle)
