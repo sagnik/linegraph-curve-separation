@@ -1,8 +1,12 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
+import java.io.File
+
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{SVGPathCurve, SVGCurve}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.SVGPathfromDString
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model._
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.writer.SVGWriter
 
 import scala.language.postfixOps
 /**
@@ -32,7 +36,6 @@ object CreateCurves {
           if (!pathElem.isAbsolute)
             pathHVArr++pathElem.args.map(x=>x.asInstanceOf[LinePath].eP.productIterator.toList.contains(0f))
           else {
-            println(pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP)))))
             if (pathElem.args.isEmpty)
               pathHVArr
             else if (pathElem.args.length==1){
@@ -117,7 +120,19 @@ object CreateCurves {
             Seq.empty[Boolean]
           ).forall(x=>x)
         )
-       possibleCurvepaths.foreach(x=> println(x.svgPath.pContent))
+       val curveGroups=possibleCurvepaths.groupBy(x=> x.pathStyle).toSeq.zipWithIndex.
+         map{case (d,index)=>SVGCurve(index.toString,d._2)}
+
+    val curveDir = new File(loc.substring(0,loc.length-4));
+    val dirResult=if (!curveDir.exists) curveDir.mkdir else true
+
+    if (dirResult) {
+      curveGroups foreach { x => println(s"Creating SVG for curve ${x.id}"); SVGWriter(x.paths, x.id, loc, curveDir.getAbsolutePath) }
+    }
+    else{
+      println("Couldn't create directory to store Curve SVG files, exiting.")
+    }
+
   }
 
 }
