@@ -66,15 +66,15 @@ class RecursiveBB [A] {
       //2 is arbitrary, just creating a box
       case path: HLPath =>{
         if (isAbs)
-          Rectangle(min(lastEndPoint.x,path.eP),(lastEndPoint.y-2).toFloat,max(lastEndPoint.x,path.eP),(lastEndPoint.y+2).toFloat)
+          Rectangle(min(lastEndPoint.x,path.eP),(lastEndPoint.y).toFloat,max(lastEndPoint.x,path.eP),(lastEndPoint.y).toFloat)
         else
-          Rectangle(min(lastEndPoint.x,lastEndPoint.x+path.eP),(lastEndPoint.y-2).toFloat,max(lastEndPoint.x,lastEndPoint.x+path.eP),(lastEndPoint.y+2).toFloat)
+          Rectangle(min(lastEndPoint.x,lastEndPoint.x+path.eP),(lastEndPoint.y).toFloat,max(lastEndPoint.x,lastEndPoint.x+path.eP),(lastEndPoint.y).toFloat)
       }
       case path: VLPath =>{
         if (isAbs)
-          Rectangle((lastEndPoint.x-2).toFloat,min(lastEndPoint.y,path.eP),(lastEndPoint.x+2).toFloat,max(lastEndPoint.y,path.eP))
+          Rectangle((lastEndPoint.x).toFloat,min(lastEndPoint.y,path.eP),(lastEndPoint.x).toFloat,max(lastEndPoint.y,path.eP))
         else
-          Rectangle((lastEndPoint.x-2).toFloat,min(lastEndPoint.y,lastEndPoint.y+path.eP),(lastEndPoint.x+2).toFloat,max(lastEndPoint.y,lastEndPoint.y+path.eP))
+          Rectangle((lastEndPoint.x).toFloat,min(lastEndPoint.y,lastEndPoint.y+path.eP),(lastEndPoint.x).toFloat,max(lastEndPoint.y,lastEndPoint.y+path.eP))
       }
 
       case _ => ???
