@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p><h1> Natural Language Summary for Scholarly Line Graphs</h1> </p>
+<p>
+This is a line graph extracted from <a href="http://www.aclweb.org/anthology/C10-2042"> a recent paper </a> (by Hassan and Ng) that compares several methods for unsupervised keyphrase extraction. As most line graphs, it was produced from a data table. Our goal is to summarize the graph based on that data. This example shows both the strength and the limitations of our system. Overlapping color curves are extracted perfectly, but a black curve is not. Also, some words are "wrongly" identified as legends in one step, but these errors are removed in the curve legend association step.
+</p>
+
+<p><h3>Steps to produce this summary:</h3> </p>
+<p>1. Getting the figure location: <a href="https://github.com/allenai/pdffigures"> a. The original code by AllenAI</a> or <a href="https://github.com/sagnik/pdffigures-scala">b.  Our re-implimentation of their code in Scala </a>. We used an old snapshot of their reposiory (<a href= "mailto:sagnik@psu.edu"> drop me an email </a> if you want to use that). Also, we extracted more than 15 Million such figures using AllenAI's code from 7 Million papers in <a href="http://citeseerx.ist.psu.edu"> CiteSeerX repository</a>. That data can be shared. </p>
+<p>2. Creating an SVG file for the figure: <a href="https://github.com/sagnik/svgimagesfromallenaipdffigures"> Github Link.</a> .</p>
+<p>3. Generating the natural language summary: <a href="https://github.com/sagnik/svg-linegraph-processing">Github Link. </a> The code is in Python and uses some other repositories for interim steps: a. <a href="https://github.com/sagnik/compoundfiguredetection"> detect if the figure is a compound figure (contains sub figure) or not</a>,b. <a href="https://github.com/sagnik/figure-classification">detect if it is a line graph or not, </a> c. <a href="https://github.com/sagnik/figure-text-classification">classify the text inside the figure in classes such as axes labels, values, legends etc </a>.</p>
+
+<p><h3>Some limitations:</h3></p> 
+<p>1. During PDF generation, a figure can be included in a raster graphics (PNG/JPEG) or a vector graphics format (PS/EPS/PDF). You can only use our system on a figure <b>that was included as a vector graphics</b>. But most (>70%) scholarly figures (we analyzed 10,000 CS papers published between 2004 and 2014 in top 50 CS conferences) are included as vector graphics.</p>
+<p>2. We only handle color graphs (curves drawn with separate color other than black) now. If a black curve exists in a color graph, we won't extract it. This limits the recall of the process but NOT the precision. <strike> Our future work will handle black curves as well, and the code will <i>possibly</i> be written in Scala :)</strike> (See <a href="https://github.com/sagnik/linegraph-curve-separation"> our GitHub repo for this problem, WIP. </a>). Stay tuned!! </p> 
+ 
+
+<h2> Original Image </h2>
+<img src="hassan-Figure-2/hassan-Figure-2.svg" border="2">
+
+<h2> Summary </h2>
+<p> This plot shows <b>Precision (%)</b> v/s <b>Recall (%)</b> curves for following methods: 1. TextRank,  2. SingleRank+Window size=2,  3. SingleRank+Unweighted,  4. SingleRank, .
+<p><b>The curve trends are:</b></p>
+<p> Curve TextRank has increasing trend </p>
+<p> Curve SingleRank+Window size=2 has decreasing trend </p>
+<p> Curve SingleRank+Unweighted has decreasing trend </p>
+<p> Curve SingleRank has decreasing trend </p>
+<p><b>The X axis values are: </b>20,40,60,80,100</p>
+<p><b> The Y axis values are: </b>50,40,30,20,10,0,0</p>
+<p> The Caption for the figure is:</p>Figure 2: Ablation results for SingleRank on In- spec </p>
+<h2> Steps </h2>
+
+<h3> Curve Separation </h3>
+<img src="hassan-Figure-2/hassan-Figure-2-Curve-0.svg" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-Curve-1.svg" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-Curve-3.svg" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-Curve-2.svg" border="2">
+
+<h3> Word Classification (Only Legend Words are Shown) </h3>
+<img src="hassan-Figure-2/hassan-Figure-2-mod-wcp.png" border="2">
+
+<h3> Combining Legend Words into Strings </h3>
+<img src="hassan-Figure-2/hassan-Figure-2-tr-wcp-lc.png" border="2">
+
+<h3> Curve Legend Association </h3>
+<img src="hassan-Figure-2/hassan-Figure-2-curve-3-cla.png" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-curve-2-cla.png" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-curve-0-cla.png" border="2">
+<img src="hassan-Figure-2/hassan-Figure-2-curve-1-cla.png" border="2">
+</body>
+</html>
