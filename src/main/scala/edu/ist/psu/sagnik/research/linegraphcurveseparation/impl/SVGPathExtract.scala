@@ -5,8 +5,6 @@ import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.SVGP
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.impl.TransformParser
 
-import scala.xml.{Node, NodeSeq}
-
 /**
  * Created by szr163 on 11/8/15.
  */

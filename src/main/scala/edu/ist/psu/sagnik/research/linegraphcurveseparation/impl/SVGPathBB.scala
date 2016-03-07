@@ -1,12 +1,9 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
 import breeze.linalg._
-
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{SVGPath, Rectangle}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{Rectangle, SVGPath}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.SVGPathfromDString
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.{MovePath, CordPair}
-
-import scala.None
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.{CordPair, MovePath}
 
 /**
  * Created by sagnik on 12/11/15.

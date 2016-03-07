@@ -6,6 +6,7 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.imp
 
 import breeze.linalg._
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.model._
+
 import scala.util.parsing.combinator.RegexParsers
 
 class TransformParser extends RegexParsers {

@@ -1,0 +1,53 @@
+/*
+  def pathHasSmallPaths(pathElems:Seq[PathCommand],lep:CordPair,pathSArr:Seq[Boolean]):Seq[Boolean]=
+    pathElems match {
+      case Nil => pathSArr
+      case pathElem :: Nil =>
+        if (pathElem.isInstanceOf[Line]) {
+          if (pathElem.args.isEmpty)
+              pathSArr
+            else if (pathElem.args.length==1){
+              val tpBB=pathElem.getBoundingBox[Line](lep,pathElem.isAbsolute,pathElem.args)
+              pathHVArr:+((tpBB.x1==tpBB.x2)||(tpBB.y1==tpBB.y2))
+            }
+            else
+              pathIsHV(
+                pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP)))),
+                lep,
+                pathHVArr
+              )
+          }
+
+        else
+          pathSArr
+      case pathElem :: rest => {
+        val lastEndPoint = pathElem.getEndPoint[pathElem.type](lep,pathElem.isAbsolute,pathElem.args)
+        if (pathElem.isInstanceOf[HL])
+          pathIsHV(rest,lastEndPoint,pathHVArr:+true)
+        else if (pathElem.isInstanceOf[VL])
+          pathIsHV(rest,lastEndPoint,pathHVArr:+true)
+        else if (pathElem.isInstanceOf[Line]) {
+          //see before
+          if (!pathElem.isAbsolute)
+            pathIsHV(rest,lastEndPoint,pathHVArr++pathElem.args.map(x=>x.asInstanceOf[LinePath].eP.productIterator.toList.contains(0f)))
+          else {
+            if (pathElem.args.isEmpty)
+              pathHVArr
+            else if (pathElem.args.length==1){
+              val tpBB=pathElem.getBoundingBox[pathElem.type](lastEndPoint,pathElem.isAbsolute,pathElem.args)
+              pathHVArr:+((tpBB.x1==tpBB.x2)||(tpBB.y1==tpBB.y2))
+            }
+            pathIsHV(
+              rest ++ pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP)))),
+              lastEndPoint,
+              pathHVArr
+            )
+          }
+        }
+        else {
+          pathIsHV(rest, lastEndPoint, pathHVArr)
+        }
+      }
+    }
+*/
+

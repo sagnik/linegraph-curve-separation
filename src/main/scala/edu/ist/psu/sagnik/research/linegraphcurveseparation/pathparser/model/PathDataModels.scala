@@ -1,7 +1,7 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model
 
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.Rectangle
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.{RecursiveEP, RecursiveBB}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl.{RecursiveBB, RecursiveEP}
 
 /**
  * Created by sagnik on 11/19/15.

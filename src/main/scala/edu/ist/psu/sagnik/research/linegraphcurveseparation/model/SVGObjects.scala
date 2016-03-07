@@ -3,7 +3,7 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.model
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.PathCommand
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.model.TransformCommand
 
-import scala.xml.{Node, Elem}
+import scala.xml.Node
 
 /**
  * Created by szr163 on 11/8/15.

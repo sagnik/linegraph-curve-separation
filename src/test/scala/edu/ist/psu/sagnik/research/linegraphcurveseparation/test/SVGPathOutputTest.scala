@@ -4,7 +4,7 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.test
  * Created by sagnik on 12/23/15.
  */
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{SVGPathExtract}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.SVGPathExtract
 import org.scalatest.FunSpec
 
 class SVGPathOutputTest extends FunSpec {

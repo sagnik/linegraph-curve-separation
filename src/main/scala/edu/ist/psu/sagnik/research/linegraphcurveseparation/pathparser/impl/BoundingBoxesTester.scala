@@ -1,6 +1,5 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.impl
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.Rectangle
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model._
 
 /**
