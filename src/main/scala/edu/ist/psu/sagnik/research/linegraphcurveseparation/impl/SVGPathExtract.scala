@@ -40,12 +40,12 @@ object SVGPathExtract {
       )
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
   }
-  //TODO: we should really write a style parser for this part, using a EBNF.
+
   def getPathStyleObject(x:SVGPathXML):SVGPathCurve={
     SVGPathCurve(
       svgPath=x.svgPath,
       pathStyle=PathStyle(
-        fill= returnPattern(x.styleXML\@"style","fill"),
+        //fill= returnPattern(x.styleXML\@"style","fill"), we are deliberately omitting the fill information.
         stroke= returnPattern(x.styleXML\@"style","stroke"),
         strokeWidth = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-width"))) -1f else returnPattern(x.styleXML\@"style","stroke-width").toFloat ,
         strokeLinecap = returnPattern(x.styleXML\@"style","stroke-linecap"),

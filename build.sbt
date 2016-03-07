@@ -37,6 +37,8 @@ libraryDependencies += "org.scalanlp" %% "breeze" % "0.11.2"
 
 libraryDependencies += "org.scalanlp" %% "breeze-natives" % "0.11.2"
 
+libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
