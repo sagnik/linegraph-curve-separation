@@ -157,6 +157,35 @@ object CreateCurves {
 
   def createCurves(svgPaths:Seq[SVGPathCurve]):Seq[SVGCurve]= Seq.empty[SVGCurve]
 
+  def createCurveSVGFiles(loc:String)={
+    val svgpathCurves= SVGPathExtract(loc)
+    val possibleCurvepaths=svgpathCurves.filterNot(
+      x=>pathIsHV(
+        x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
+        CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+        Seq.empty[Boolean]
+      ).forall(x=>x) ||
+        pathIsSmall(
+          x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
+          CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+          Seq.empty[Boolean],
+          x.svgPath.transformOps(0).matrix(0,0)
+        ).forall(x=>x)
+    )
+    val curveGroups=possibleCurvepaths.groupBy(x=> x.pathStyle).toSeq.zipWithIndex.
+      map{case (d,index)=>SVGCurve(index.toString,d._2)}
+
+    val curveDir = new File(loc.substring(0,loc.length-4));
+    val dirResult=if (!curveDir.exists) curveDir.mkdir else {FileUtils.deleteDirectory(curveDir); curveDir.mkdir}
+
+    if (dirResult) {
+      curveGroups foreach { x => println(s"Creating SVG for curve ${x.id}"); SVGWriter(x.paths, x.id, loc, curveDir.getAbsolutePath) }
+    }
+    else{
+      println("Couldn't create directory to store Curve SVG files, exiting.")
+    }
+  }
+
   def main(args: Array[String]):Unit= {
     //val loc = "data/10.1.1.108.9317-Figure-4.svg"
     val loc="data/10.1.1.105.5053-Figure-2.svg"
@@ -194,34 +223,7 @@ object CreateCurves {
                  )
                ))
 */
-
-    val svgpathCurves= SVGPathExtract(loc)
-    val possibleCurvepaths=svgpathCurves.filterNot(
-      x=>pathIsHV(
-        x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
-        CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
-        Seq.empty[Boolean]
-      ).forall(x=>x) ||
-        pathIsSmall(
-          x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
-          CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
-          Seq.empty[Boolean],
-          x.svgPath.transformOps(0).matrix(0,0)
-        ).forall(x=>x)
-    )
-    val curveGroups=possibleCurvepaths.groupBy(x=> x.pathStyle).toSeq.zipWithIndex.
-      map{case (d,index)=>SVGCurve(index.toString,d._2)}
-
-    val curveDir = new File(loc.substring(0,loc.length-4));
-    val dirResult=if (!curveDir.exists) curveDir.mkdir else {FileUtils.deleteDirectory(curveDir); curveDir.mkdir}
-
-    if (dirResult) {
-      curveGroups foreach { x => println(s"Creating SVG for curve ${x.id}"); SVGWriter(x.paths, x.id, loc, curveDir.getAbsolutePath) }
-    }
-    else{
-      println("Couldn't create directory to store Curve SVG files, exiting.")
-    }
-
+   createCurveSVGFiles(loc)
   }
 
 }
