@@ -21,7 +21,7 @@ object CreateCurves {
   A better implementation will return a sequence of subpaths (PathCommand) that are not horizontal or vertical. But then
   we will need code to create a DSTring given a sequence of path commands.
   */
-  val SMALLPARAM=4f
+  val SMALLPARAM=5f
   def pathIsHV(pathElems:Seq[PathCommand],lep:CordPair,pathHVArr:Seq[Boolean]):Seq[Boolean]=
     pathElems match {
       case Nil => pathHVArr
@@ -155,6 +155,8 @@ object CreateCurves {
       }
     }
 
+  def pathIsSmall(pathElems:Seq[PathCommand],lep:CordPair,pathSArr:Seq[Boolean]):Seq[Boolean]=pathIsSmall(pathElems,lep,pathSArr,1)
+
   def createCurves(svgPaths:Seq[SVGPathCurve]):Seq[SVGCurve]= Seq.empty[SVGCurve]
 
   def createCurveSVGFiles(loc:String)={
@@ -207,7 +209,7 @@ object CreateCurves {
         //val dString="M 5,5 L 5,15 L 10,10 L 15,5 z"
         //val dString="M 5,5 5,15 15,15 15,5 z"
         //val dString="m 931.537,3069.41 23.625,-23.62"
-        val dString="m 974.849,4133.7 1771.5,0 0,1291.5 -1771.5,0 0,-1291.5 z"
+        val dString="m 2102.1,4133.7 0,23.62 m 0,1267.88 0,-23.63"
         val pathCommands=SVGPathfromDString.getPathCommands(dString)
 
         pathCommands.foreach(x=>println(x))

@@ -33,6 +33,16 @@ object Rectangle {
   }
 
   //TODO:check correctness
+  def rectTouches(r1:Rectangle,r2:Rectangle):Boolean=
+    if (r1.equals(r2)) true
+    else {
+      if (rectInsideStringent(r1,r2) || rectInsideStringent(r2,r1)) false
+      else rectDistance(r1,r2)<2f
+    }
+
+  def rectInsideStringent(in:Rectangle,out:Rectangle):Boolean=
+    (in.x1>out.x1 && in.y1>out.y1 && in.x2<out.x2 && in.y2<out.y2) //all points are inside
+
   def rectInside(in:Rectangle,out:Rectangle):Boolean= in.x1>=out.x1 && in.y1>=out.y1 && in.x2<=out.x2 && in.y2<=out.y2
 
   def rectInside(in:Rectangle,out:Rectangle,tolerance:Float):Boolean= in.x1+tolerance>=out.x1 && in.y1+tolerance>=out.y1 && in.x2-tolerance<=out.x2 && in.y2-tolerance<=out.y2

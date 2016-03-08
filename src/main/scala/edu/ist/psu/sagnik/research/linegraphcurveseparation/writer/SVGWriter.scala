@@ -30,8 +30,8 @@ object SVGWriter {
     File(curveSVGLoc).writeAll(svgStart + svgString + svgEnd)
   }
 
-  def apply(curvePaths:Seq[SVGPathCurve],orgSVGLoc:String):Unit= {
-    val curveSVGLoc = orgSVGLoc.substring(0, orgSVGLoc.length - 4)+ "-tms.svg"
+  def apply(curvePaths:Seq[SVGPathCurve],orgSVGLoc:String,ext:String):Unit= {
+    val curveSVGLoc = orgSVGLoc.substring(0, orgSVGLoc.length - 4)+ "-"+ext+".svg"
     println(curveSVGLoc)
     //TODO: Possible exception
     val height = (XMLReader(orgSVGLoc) \\ "svg")(0) \@ "height"
