@@ -45,15 +45,15 @@ object SVGPathExtract {
     SVGPathCurve(
       svgPath=x.svgPath,
       pathStyle=PathStyle(
-        //fill= returnPattern(x.styleXML\@"style","fill"), we are deliberately omitting the fill information.
+        fill= returnPattern(x.styleXML\@"style","fill"), //we are deliberately omitting the fill information.
         stroke= returnPattern(x.styleXML\@"style","stroke"),
-        strokeWidth = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-width"))) -1f else returnPattern(x.styleXML\@"style","stroke-width").toFloat ,
+        strokeWidth = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-width"))) (-1f).toString else returnPattern(x.styleXML\@"style","stroke-width") ,
         strokeLinecap = returnPattern(x.styleXML\@"style","stroke-linecap"),
         strokeLinejoin = returnPattern(x.styleXML\@"style","stroke-linejoin"),
         strokeMiterlimit = returnPattern(x.styleXML\@"style","stroke-miterlimit"),
         strokeDasharray = returnPattern(x.styleXML\@"style","stroke-dasharray"),
-        strokeOpacity = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-opacity"))) -1f else returnPattern(x.styleXML\@"style","stroke-opacity").toFloat,
-        fillOpacity= if ("-1".equals(returnPattern(x.styleXML\@"style","fill-opacity"))) -1f else returnPattern(x.styleXML\@"style","fill-opacity").toFloat
+        strokeOpacity = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-opacity"))) (-1f).toString else returnPattern(x.styleXML\@"style","stroke-opacity"),
+        fillOpacity= if ("-1".equals(returnPattern(x.styleXML\@"style","fill-opacity"))) (-1f).toString else returnPattern(x.styleXML\@"style","fill-opacity")
       )
     )
   }

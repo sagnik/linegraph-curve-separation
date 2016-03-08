@@ -25,7 +25,8 @@ object SVGPathfromDString extends SVGPathParser{
           })
           pathElemsMod.zipWithIndex.map(x => {
             if (x._2 == (pathElemsMod.length-1) && x._1.isInstanceOf[Close])
-              pathElemsMod(0)
+              //pathElemsMod(0)
+              Line(isAbsolute = true, Seq(LinePath(eP=pathElemsMod(0).asInstanceOf[Move].args(0).eP)))
             else x._1
 
           })
