@@ -160,7 +160,7 @@ object CreateCurves {
   def createCurves(svgPaths:Seq[SVGPathCurve]):Seq[SVGCurve]= Seq.empty[SVGCurve]
 
   def createCurveSVGFiles(loc:String)={
-    val svgpathCurves= SVGPathExtract(loc)
+    val svgpathCurves= SVGPathExtract(loc,false)
     val ppcp=svgpathCurves.filterNot(
       x=>
         pathIsHV(

@@ -142,7 +142,7 @@ object SplitPaths {
     }
 
   def apply(loc:String)={
-      val cS= SVGPathExtract(loc)
+      val cS= SVGPathExtract(loc,false)
       //Seq(svgpathCurves(0)).foreach(x=>println(x.svgPath.id,x.svgPath.pdContent,x.svgPath.pOps))
       val spPath=cS.map(
         c=>

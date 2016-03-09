@@ -13,24 +13,26 @@ object MarkerDetection {
 
   val TMTHRESHOLD=10f
   def apply(loc:String):Unit={
-    val svgpathCurves= SVGPathExtract(loc)
+    val svgpathCurves= SVGPathExtract(loc,true)
+
+    println(svgpathCurves.length)
 
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
 
-    //note that we are allowing paths to be small in ONE dimensions, not in both dimensions.
-    //TODO: This will fuck up things when each axis line is drawn by a separate path.
-
     val (possibleTicsMarkers,possibleAxes) = svgpathCurves.partition(x=>
       x.svgPath.bb match{
         case Some(bb) => (
-          bb.x2-bb.x1< (TMTHRESHOLD) ||
+          bb.x2-bb.x1< (TMTHRESHOLD) &&
             bb.y2-bb.y1<(TMTHRESHOLD)
           )
         case _ => false
       }
     )
+
+    println(possibleTicsMarkers.length,possibleAxes.length)
+
     val axes=possibleAxes.filter(x=>isAxes(x,width,height))
     val tics=possibleTicsMarkers.filter(x=>
       CreateCurves.pathIsHV(
@@ -41,8 +43,8 @@ object MarkerDetection {
       axes.exists(a=>pathOverlap(x,a))
     )
 
+    println(s"axis paths: ${axes.length} tic paths: ${tics.length}" )
     //(axes++tics).foreach(x=>println(x.svgPath.id))
-    println(s"length: ${(tics).length}")
 
     SVGWriter(axes++tics,loc,"ats") //axes+tics
 
@@ -57,6 +59,7 @@ object MarkerDetection {
   }
 
   val AXESRATIOTHRESHOLD=0.5f
+
   def isAxes(x:SVGPathCurve,W:Float,H:Float):Boolean={
     CreateCurves.pathIsHV(
       x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
@@ -73,9 +76,9 @@ object MarkerDetection {
   def main(args: Array[String]):Unit= {
     //val loc = "data/10.1.1.108.9317-Figure-4.svg"
     //val loc = "data/10.1.1.105.5053-Figure-6.svg"
-    //val loc="src/test/resources/hassan-Figure-2.svg"
+    val loc="src/test/resources/hassan-Figure-2-sps.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
-    val loc="data/10.1.1.112.9247-Figure-4.svg"
+    //val loc="data/10.1.1.112.9247-Figure-4.svg"
     MarkerDetection(loc)
   }
 }

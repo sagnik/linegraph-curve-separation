@@ -12,7 +12,33 @@ import edu.ist.psu.sagnik.research.linegraphcurveseparation.transformparser.impl
 
 object SVGPathExtract {
 
-  def apply(fileLoc:String)=getPaths(XMLReader(fileLoc),GroupExtract.apply(fileLoc))
+  def apply(fileLoc:String,sps:Boolean)=
+    if (sps)
+      getPaths(XMLReader(fileLoc))
+    else
+      getPaths(XMLReader(fileLoc),GroupExtract.apply(fileLoc))
+
+  def getPaths(xmlContent:scala.xml.Elem):Seq[SVGPathCurve]= {
+    //This is a path splitted file as created by edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.SplitPaths.
+    //it doesn't have any group.
+    //println(s" here ${(xmlContent \\ "path").length}")
+
+    println(s" here")
+    (xmlContent \ "path").map(x=>
+      SVGPathXML(
+        svgPath=SVGPath(
+          id=x \@ "id",
+          pdContent = x \@ "d",
+          pOps = SVGPathfromDString.getPathCommands(x.attribute("d") match {case Some(con)=>con.text case _ => ""}),
+          pContent = x.toString,
+          groups=Seq.empty[SVGGroup],
+          transformOps=TransformParser(x \@ "transform"),
+          bb=None
+        ),
+        styleXML=x
+      )
+    ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
+  }
 
   def getPaths(xmlContent:scala.xml.Elem, svgGroups:Seq[SVGGroup]):Seq[SVGPathCurve]= {
     //There's exactly one group with a translate operation, but that might not have an ID.
