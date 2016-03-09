@@ -14,23 +14,8 @@ object MarkerDetection {
   val TMTHRESHOLD=10f
   def apply(loc:String):Unit={
     val svgpathCurves= SVGPathExtract(loc)
-//Print statements to test
-/*
-    svgpathCurves.foreach(x=>
-      println(x.svgPath.id, x.svgPath.pOps.length,x.svgPath.pOps.map(x=>x.args.length),
-        x.svgPath.bb match{
-          case Some(bb)=>
-            List(
-              bb.x1,///x.svgPath.transformOps(0).matrix(0,0),
-              bb.y1,///x.svgPath.transformOps(0).matrix(0,0),
-              bb.x2,///x.svgPath.transformOps(0).matrix(0,0),
-              bb.y2///x.svgPath.transformOps(0).matrix(0,0)
-            )
-          case None => "None"
-        }
-      )
-    )
-*/
+
+    //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
 
