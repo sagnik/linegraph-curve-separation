@@ -41,6 +41,7 @@ object SVGPathExtract {
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
   }
 
+  //TODO: for paths with not none fill elements, this is incorrect.  
   def getPathStyleObject(x:SVGPathXML):SVGPathCurve={
     SVGPathCurve(
       svgPath=x.svgPath,

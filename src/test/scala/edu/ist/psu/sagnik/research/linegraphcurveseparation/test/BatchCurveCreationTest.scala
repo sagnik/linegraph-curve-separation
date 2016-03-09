@@ -1,6 +1,6 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.test
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{MarkerDetection, CreateCurves}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{SplitPaths, MarkerDetection, CreateCurves}
 import org.scalatest.FunSpec
 
 import java.io.File
@@ -17,7 +17,7 @@ class BatchCurveCreationTest extends FunSpec {
       svgFiles.foreach(x=>{
         println(x);
         try {
-          MarkerDetection(x)
+          SplitPaths(x)
         }
         catch{
           case a:org.xml.sax.SAXParseException => println(s"ill formed SVG for ${x}")

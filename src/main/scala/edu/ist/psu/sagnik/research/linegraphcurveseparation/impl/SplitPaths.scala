@@ -106,7 +106,7 @@ object SplitPaths {
         }
         else {
           val lastEp = pathElem.getEndPoint[pathElem.type](lep,pathElem.isAbsolute,pathElem.args)
-          splitPath(pathElems, path, lastEp, pathSArr)
+          pathSArr
         }
       case pathElem :: rest => {
         val lastEndPoint = pathElem.getEndPoint[pathElem.type](lep,pathElem.isAbsolute,pathElem.args)
@@ -140,26 +140,28 @@ object SplitPaths {
 
       }
     }
+
+  def apply(loc:String)={
+      val cS= SVGPathExtract(loc)
+      //Seq(svgpathCurves(0)).foreach(x=>println(x.svgPath.id,x.svgPath.pdContent,x.svgPath.pOps))
+      val spPath=cS.map(
+        c=>
+          SplitPaths.splitPath(
+            c.svgPath.pOps.slice(1,c.svgPath.pOps.length),
+            c,
+            CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+            Seq.empty[SVGPathCurve]
+          )
+      ).flatten
+      SVGWriter(spPath,loc,"sps")
+    }
 }
 
 object TestSplitPaths{
   def main(args: Array[String]):Unit= {
-    val loc="src/test/resources/hassan-Figure-2.svg"
-    val cS= SVGPathExtract(loc)
-    //Seq(svgpathCurves(0)).foreach(x=>println(x.svgPath.id,x.svgPath.pdContent,x.svgPath.pOps))
-
-    val spPath=cS.map(
-      c=>
-        SplitPaths.splitPath(
-          c.svgPath.pOps.slice(1,c.svgPath.pOps.length),
-          c,
-          CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
-          Seq.empty[SVGPathCurve]
-        )
-    ).flatten
-
-    SVGWriter(spPath,loc,"sps")
-
+    //val loc="src/test/resources/hassan-Figure-2.svg"
+    val loc="data/10.1.1.164.2702-Figure-2.svg"
+    SplitPaths(loc)
   }
 
 }
