@@ -1,0 +1,181 @@
+  //Remember an SVG path can have multiple subpaths. Usually a path contains multiple path commands. Each path command
+  // (lineto, moveto) can paint something. we say a path is horizontal or vertical if all subpaths in this path paints
+  // a horizontal or vertical line.
+  /*
+  TODO:
+  A better implementation will return a sequence of subpaths (PathCommand) that are not horizontal or vertical. But then
+  we will need code to create a DSTring given a sequence of path commands.
+  */
+  val SMALLPARAM=5f
+  def pathIsHV(pathElems:Seq[PathCommand],lep:CordPair,pathHVArr:Seq[Boolean]):Seq[Boolean]=
+    pathElems match {
+      case Nil => pathHVArr
+      case pathElem :: Nil =>
+        if (pathElem.isInstanceOf[HL])
+          pathHVArr:+true
+        else if (pathElem.isInstanceOf[VL])
+          pathHVArr:+true
+        else if (pathElem.isInstanceOf[Line]) {
+          //there can be two cases, if the command is absolute, we will convert create a line command
+          // for each of the linepaths. if the command is relative, we only need to check if
+          // each of the linepaths contain a 0.
+          //println(s"pathelems: ${pathElems}")
+          if (!pathElem.isAbsolute)
+            pathHVArr++pathElem.args.map(x=>x.asInstanceOf[LinePath].eP.productIterator.toList.contains(0f))
+          else {
+            if (pathElem.args.isEmpty)
+              pathHVArr
+            else if (pathElem.args.length==1){
+              val tpBB=pathElem.getBoundingBox[Line](lep,pathElem.isAbsolute,pathElem.args)
+              pathHVArr:+((tpBB.x1==tpBB.x2)||(tpBB.y1==tpBB.y2))
+            }
+            else {
+              //println("here")
+              //println(s"new array: ${pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP))))}")
+              pathIsHV(
+                pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP)))),
+                lep,
+                pathHVArr
+              )
+            }
+          }
+        }
+        else
+          pathHVArr
+      case pathElem :: rest => {
+        val lastEndPoint = pathElem.getEndPoint[Line](lep,pathElem.isAbsolute,pathElem.args)
+        //println(s"pathElem: ${pathElem}, rest ${rest}, lastEndPoint: ${lastEndPoint}, prevEndPoint:${lep}")
+        if (pathElem.isInstanceOf[HL])
+          pathIsHV(rest,lastEndPoint,pathHVArr:+true)
+        else if (pathElem.isInstanceOf[VL])
+          pathIsHV(rest,lastEndPoint,pathHVArr:+true)
+        else if (pathElem.isInstanceOf[Line]) {
+          //see before
+          if (!pathElem.isAbsolute)
+            pathIsHV(rest,lastEndPoint,pathHVArr++pathElem.args.map(x=>x.asInstanceOf[LinePath].eP.productIterator.toList.contains(0f)))
+          else {
+            if (pathElem.args.isEmpty)
+              pathHVArr
+            else if (pathElem.args.length==1){
+              val tpBB=pathElem.getBoundingBox[Line](lep,pathElem.isAbsolute,pathElem.args)
+              pathIsHV(
+                rest,
+                lastEndPoint,
+                pathHVArr:+((tpBB.x1==tpBB.x2)||(tpBB.y1==tpBB.y2))
+              )
+            }
+            else {
+              val splitPaths=pathElem.args.map(x => Line(isAbsolute = true, args = Seq(LinePath(x.asInstanceOf[LinePath].eP))))
+              pathIsHV(
+                splitPaths++rest,
+                lep,
+                pathHVArr
+              )
+            }
+
+          }
+        }
+        else {
+          pathIsHV(rest, lastEndPoint, pathHVArr)
+        }
+      }
+    }
+
+  //we say a path has small subpaths if each subpath in this path paints a very small part of a curve. The idea is to remove
+  // markers. We are already removing some lines in such marekers in the method pathISHV.
+  //TODO: This will probably limit the precision of the process. Are curves separable even if we remove marker elements?
+  //TODO: Also, for now we will only remove subpaths painted by "Line" command. In future, other commands will be handled.
+
+  def pathIsSmall(pathElems:Seq[PathCommand],lep:CordPair,pathSArr:Seq[Boolean],scalingFactor:Float):Seq[Boolean]=
+    pathElems match {
+      case Nil => pathSArr
+      case pathElem :: Nil =>
+        if (pathElem.isInstanceOf[Line]) {
+          if (pathElem.args.isEmpty)
+            pathSArr
+          else if (pathElem.args.length==1){
+            val tpBB=pathElem.getBoundingBox[Line](lep,pathElem.isAbsolute,pathElem.args)
+            //println(s"1 ${tpBB}")
+            pathSArr:+((tpBB.x2-tpBB.x1)<(SMALLPARAM/scalingFactor)||(tpBB.y2-tpBB.y1)<(SMALLPARAM/scalingFactor))
+          }
+          else {
+            pathIsSmall(
+              pathElem.args.map(x => Line(isAbsolute = pathElem.isAbsolute, args = Seq(LinePath(x.asInstanceOf[LinePath].eP)))),
+              lep,
+              pathSArr,
+              scalingFactor
+            )
+          }
+        }
+        else
+          pathSArr
+      case pathElem :: rest => {
+        val lastEndPoint = pathElem.getEndPoint[Line](lep,pathElem.isAbsolute,pathElem.args)
+        if (pathElem.isInstanceOf[Line]) {
+          if (pathElem.args.isEmpty)
+            pathSArr
+          else if (pathElem.args.length==1){
+            val tpBB=pathElem.getBoundingBox[Line](lep,pathElem.isAbsolute,pathElem.args)
+            //println(s"2 ${tpBB}, pathElem: ${pathElem}, lep: ${lep}")
+            pathIsSmall(
+              rest,
+              lastEndPoint,
+              pathSArr:+((tpBB.x2-tpBB.x1)<(SMALLPARAM/scalingFactor)||(tpBB.y2-tpBB.y1)<(SMALLPARAM/scalingFactor)),
+              scalingFactor
+            )
+          }
+          else {
+            val splitPaths=pathElem.args.map(x => Line(isAbsolute = pathElem.isAbsolute, args = Seq(LinePath(x.asInstanceOf[LinePath].eP))))
+            pathIsSmall(
+              splitPaths++rest,
+              lep,
+              pathSArr,
+              scalingFactor
+            )
+          }
+        }
+        else
+          pathIsSmall(rest, lastEndPoint, pathSArr, scalingFactor)
+
+      }
+    }
+
+  def pathIsSmall(pathElems:Seq[PathCommand],lep:CordPair,pathSArr:Seq[Boolean]):Seq[Boolean]=pathIsSmall(pathElems,lep,pathSArr,1)
+
+  def createCurves(svgPaths:Seq[SVGPathCurve]):Seq[SVGCurve]= Seq.empty[SVGCurve]
+
+  def createCurveSVGFiles(loc:String)={
+    val svgpathCurves= SVGPathExtract(loc,false)
+    val ppcp=svgpathCurves.filterNot(
+      x=>
+        pathIsHV(
+          x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
+          CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+          Seq.empty[Boolean]
+        ).forall(x=>x)
+    )
+    val possibleCurvepaths=ppcp
+      .filterNot(
+        x=>pathIsSmall(
+          x.svgPath.pOps.slice(1,x.svgPath.pOps.length),
+          CordPair(x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,x.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+          Seq.empty[Boolean],
+          x.svgPath.transformOps(0).matrix(0,0)
+        ).forall(x=>x)
+      )
+
+    val finalCurvePaths= if (possibleCurvepaths.isEmpty) ppcp else possibleCurvepaths
+
+    val curveGroups=finalCurvePaths.groupBy(x=> x.pathStyle).toSeq.zipWithIndex.
+      map{case (d,index)=>SVGCurve(index.toString,d._2)}
+
+    val curveDir = new File(loc.substring(0,loc.length-4));
+    val dirResult=if (!curveDir.exists) curveDir.mkdir else {FileUtils.deleteDirectory(curveDir); curveDir.mkdir}
+
+    if (dirResult) {
+      curveGroups foreach { x => println(s"Creating SVG for curve ${x.id}"); SVGWriter(x.paths, x.id, loc, curveDir.getAbsolutePath) }
+    }
+    else{
+      println("Couldn't create directory to store Curve SVG files, exiting.")
+    }
+  }
