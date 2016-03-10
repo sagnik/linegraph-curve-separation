@@ -19,8 +19,8 @@ new/
 .idea*
 verboseresults*
 data/*
-src/test/resources/
-!src/test/resources/hassan-Figure-2.svg
+
+
 
 # sbt specific
 .cache/

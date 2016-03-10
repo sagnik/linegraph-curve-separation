@@ -35,6 +35,11 @@ object SVGPathExtract {
         styleXML=x
       )
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
+      .filterNot(a=>
+      ("#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")) && "none".equals(a.pathStyle.stroke.getOrElse("none"))) || //the path has no color, either from fill or stroke
+        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")))
+      )
+
   }
 
   def getPaths(xmlContent:scala.xml.Elem, svgGroups:Seq[SVGGroup]):Seq[SVGPathCurve]= {
@@ -62,26 +67,32 @@ object SVGPathExtract {
         styleXML=x
       )
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
+      .filterNot(a=>
+      ("#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")) && "none".equals(a.pathStyle.stroke.getOrElse("none"))) || //the path has no color, either from fill or stroke
+        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")))
+      )
   }
 
-  //TODO: for paths with not none fill elements, this is incorrect.  
+
   def getPathStyleObject(x:SVGPathXML):SVGPathCurve={
     SVGPathCurve(
       svgPath=x.svgPath,
       pathStyle=PathStyle(
-        fill= returnPattern(x.styleXML\@"style","fill"), //we are deliberately omitting the fill information.
+        fill= returnPattern(x.styleXML\@"style","fill"),
+        fillRule=returnPattern(x.styleXML\@"style","fill-rule"),
+        fillOpacity= returnPattern(x.styleXML\@"style","fill-opacity"),
         stroke= returnPattern(x.styleXML\@"style","stroke"),
-        strokeWidth = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-width"))) (-1f).toString else returnPattern(x.styleXML\@"style","stroke-width") ,
+        strokeWidth = returnPattern(x.styleXML\@"style","stroke-width"),
         strokeLinecap = returnPattern(x.styleXML\@"style","stroke-linecap"),
         strokeLinejoin = returnPattern(x.styleXML\@"style","stroke-linejoin"),
         strokeMiterlimit = returnPattern(x.styleXML\@"style","stroke-miterlimit"),
         strokeDasharray = returnPattern(x.styleXML\@"style","stroke-dasharray"),
-        strokeOpacity = if ("-1".equals(returnPattern(x.styleXML\@"style","stroke-opacity"))) (-1f).toString else returnPattern(x.styleXML\@"style","stroke-opacity"),
-        fillOpacity= if ("-1".equals(returnPattern(x.styleXML\@"style","fill-opacity"))) (-1f).toString else returnPattern(x.styleXML\@"style","fill-opacity")
+        strokeDashoffset = returnPattern(x.styleXML\@"style","stroke-dashoffset"),
+        strokeOpacity = returnPattern(x.styleXML\@"style","stroke-opacity") 
       )
     )
   }
-  def returnPattern(pC:String,s:String)=
-    if (pC.split(";").filter(x => x.contains(s)).length == 0) "-1"
-    else pC.split(";").filter(x => x.contains(s))(0).split(":")(1)
+  def returnPattern(pC:String,s:String):Option[String]=
+    if (pC.split(";").filter(x => x.contains(s)).length == 0) None
+    else Some(pC.split(";").filter(x => x.contains(s))(0).split(":")(1))
 }

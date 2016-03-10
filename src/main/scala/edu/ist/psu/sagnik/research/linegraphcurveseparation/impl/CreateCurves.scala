@@ -16,12 +16,12 @@ import scala.language.postfixOps
 object CreateCurves {
 
   def colorBasedSegmentation(curvePaths:Seq[SVGPathCurve]):Seq[SVGCurve]=
-    curvePaths.groupBy(x=> x.pathStyle.stroke).toSeq.zipWithIndex.map{case (d,index)=>SVGCurve(index.toString,d._2)}
+    curvePaths.groupBy(x=> x.pathStyle.stroke.getOrElse("none")).toSeq.zipWithIndex.map{case (d,index)=>SVGCurve(index.toString,d._2)}
 
   def apply(loc:String,createImages:Boolean)={
     val svgPaths=
       if (loc.contains("-sps")) //this SVG has already paths split
-        SVGPathExtract(loc, true).groupBy(x => x.svgPath.pdContent).map(_._2.head).toIndexedSeq //this step is done to remove duplicate paths that can come from "close" paths
+        SVGPathExtract(loc, true)
       else
         SVGPathExtract(loc,false).map(
           c=>
@@ -31,7 +31,7 @@ object CreateCurves {
               CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
               Seq.empty[SVGPathCurve]
             )
-        ).flatten.groupBy(x => x.svgPath.pdContent).map(_._2.head).toIndexedSeq
+        ).flatten
 
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat

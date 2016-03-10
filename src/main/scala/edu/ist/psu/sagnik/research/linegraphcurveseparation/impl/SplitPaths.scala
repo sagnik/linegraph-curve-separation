@@ -39,22 +39,20 @@ object SplitPaths {
 
   def createSVGPathString(s: PathStyle, tOps: Seq[TransformCommand], mC: Move, lC: Line, id: String): String = {
 
-    val styleString = "fill:" +
-      s.fill +
-      ";stroke:" +
-      s.stroke +
-      ";stroke-width:" +
-      s.strokeWidth +
-      ";stroke-linecap:" +
-      s.strokeLinecap +
-      ";stroke-linejoin:" +
-      s.strokeLinejoin +
-      ";stroke-miterlimit:" +
-      s.strokeMiterlimit +
-      ";stroke-opacity:" +
-      s.strokeOpacity +
-      ";stroke-dasharray:" +
-      s.strokeDasharray
+    val fill=s.fill match {case Some(x)=>"fill:"+x+";" case _ => ""}
+    val fillRule=s.fillRule match {case Some(x)=>"fill-rule:"+x+";" case _ => ""}
+    val fillOpacity=s.fillOpacity match {case Some(x)=>"fill-opacity:"+x+";" case _ => ""}
+    val stroke=s.stroke match {case Some(x)=>"stroke:"+x+";" case _ => ""}
+    val strokeWidth=s.strokeWidth match {case Some(x)=>"stroke-width:"+x+";" case _ => ""}
+    val strokeLinecap=s.strokeLinecap match {case Some(x)=>"stroke-linecap:"+x+";" case _ => ""}
+    val strokeLinejoin=s.strokeLinejoin match {case Some(x)=>"stroke-linejoin:"+x+";" case _ => ""}
+    val strokeMiterlimit=s.strokeMiterlimit match {case Some(x)=>"stroke-miterlimit:"+x+";" case _ => ""}
+    val strokeDasharray=s.strokeDasharray match {case Some(x)=>"stroke-dasharray:"+x+";" case _ => ""}
+    val strokeDashoffset=s.strokeDashoffset match {case Some(x)=>"stroke-dashoffset:"+x+";" case _ => ""}
+    val strokeOpacity=s.strokeOpacity match {case Some(x)=>"stroke-opacity:"+x+";" case _ => ""}
+
+    val styleString =
+      fill+fillRule+fillOpacity+stroke+strokeWidth+strokeLinecap+strokeLinejoin+strokeMiterlimit+strokeDasharray+strokeDashoffset+strokeOpacity
 
     val transformString = "matrix(1.0,0.0,0.0,0.0,1.0,0.0)" //this is equivalent to no transformation, this will be corrected when
     //we map this with SVGPathBB
@@ -160,7 +158,8 @@ object SplitPaths {
 object TestSplitPaths{
   def main(args: Array[String]):Unit= {
     //val loc="src/test/resources/hassan-Figure-2.svg"
-    val loc="data/10.1.1.164.2702-Figure-2.svg"
+    //val loc="data/10.1.1.164.2702-Figure-2.svg"
+    val loc="data/10.1.1.100.3286-Figure-9.svg"
     SplitPaths(loc)
   }
 

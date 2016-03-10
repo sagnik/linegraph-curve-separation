@@ -18,36 +18,42 @@ object SeparateAxesGridTickPaths {
 
   def apply(svgpathCurves: Seq[SVGPathCurve],width:Float,height:Float):(Seq[SVGPathCurve],Seq[SVGPathCurve],Seq[SVGPathCurve])= {
 
-    val (possibleAxesAndGrids, others) = svgpathCurves.partition(x => isAxesOrGrid(x, width, height))
+    val (paGrids, others) = svgpathCurves.partition(x => isAxesOrGrid(x, width, height))
+
+    val possibleAxesAndGrids=paGrids
 
     val axes = if (possibleAxesAndGrids.length<5)
       possibleAxesAndGrids
-    else
-      (0 to possibleAxesAndGrids.length - 1).
-        map(index => (distanceFromBoundary(width, height, possibleAxesAndGrids(index).svgPath.bb), index))
-        .sortBy(_._1).map(a => a._2)
-        .map(b => possibleAxesAndGrids(b)).slice(0, 4)
+    else // we need to find 2 or 4 paths that doesn't have any other to left or
+      List(
+        getAxis(possibleAxesAndGrids,"left"), //left
+        getAxis(possibleAxesAndGrids,"right"),
+        getAxis(possibleAxesAndGrids,"top"),
+        getAxis(possibleAxesAndGrids,"bottom")
+      ).flatten
 
     val (tics,curvePaths)=others.partition(x=>
       (x.svgPath.bb match{ case Some(bb)=>(bb.x1==bb.x2 ||bb.y1==bb.y2); case _ => false}) &&
         (x.svgPath.bb match{ case Some(bb)=>(bb.x2-bb.x1<TMTHRESHOLD && bb.y2-bb.y1<TMTHRESHOLD); case _ => false}) &&
         axes.exists(a=>pathOverlap(x,a))
     )
-
     (axes,tics,curvePaths)
   }
 
-  //TODO: more testing
-  implicit def rd(r1:Rectangle,r2:Rectangle)=Rectangle.rectDistance(r1,r2)
-  def distanceFromBoundary(W:Float,H:Float,bb:Option[Rectangle]):Float= bb match{
-    case Some(bb)=>List(
-      rd(Rectangle(0f,0f,H,0f),bb),
-      rd(Rectangle(H,0f,W,H),bb),
-      rd(Rectangle(W,0f,W,H),bb),
-      rd(Rectangle(0f,0f,W,0f),bb)
-    ).min
-    case _ => 0f
-  }
+  def isVertical(bb:Option[Rectangle]):Boolean=bb match{case Some(bb)=> bb.x1==bb.x2; case _ => false}
+
+  def getAxis(ps:Seq[SVGPathCurve],pos:String):Option[SVGPathCurve]=
+    if ("left".equals(pos))
+      ps.filter(a=> isVertical(a.svgPath.bb)).sortWith(_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).x1<_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).x1).headOption
+    else if ("right".equals(pos))
+      ps.filter(a=> isVertical(a.svgPath.bb)).sortWith(_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).x2>_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).x2).headOption
+    else if ("top".equals(pos))
+      ps.filter(a=> !isVertical(a.svgPath.bb)).sortWith(_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).y1<_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).y1).headOption
+    else if ("bottom".equals(pos))
+      ps.filter(a=> !isVertical(a.svgPath.bb)).sortWith(_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).y2>_.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)).y2).headOption
+    else
+      ps.headOption // should never reach here
+
 
 
   def pathOverlap(a:SVGPathCurve,b:SVGPathCurve):Boolean={
@@ -57,29 +63,31 @@ object SeparateAxesGridTickPaths {
     }
   }
 
-  val AXESRATIOTHRESHOLD=0.8f
+  val AXESRATIOTHRESHOLD=0.6f
 
   def isAxesOrGrid(x:SVGPathCurve,W:Float,H:Float):Boolean=
     if (x.svgPath.pOps.length<2 || !x.svgPath.pOps(0).isInstanceOf[Move] || !x.svgPath.pOps(1).isInstanceOf[Line])
       false
     else x.svgPath.bb match {
       case Some(bb)=>
-        (bb.x1==bb.x2 || bb.y1==bb.y2) && //horizontal or vertical
-          (bb.y2-bb.y1>AXESRATIOTHRESHOLD*H || bb.x2-bb.x1>AXESRATIOTHRESHOLD*W) && //sufficiently large
-          (!AXESCOLORS.contains(x.pathStyle.fill) || !AXESCOLORS.contains(x.pathStyle.fill.toUpperCase))  //drawn with black or grey
+        (bb.x1 == bb.x2 || bb.y1 == bb.y2) && //horizontal or vertical
+          (bb.y2 - bb.y1 > AXESRATIOTHRESHOLD * H || bb.x2 - bb.x1 > AXESRATIOTHRESHOLD * W) && //sufficiently large
+          (AXESCOLORS.contains(x.pathStyle.stroke.getOrElse("#000000")) || AXESCOLORS.contains(x.pathStyle.stroke.getOrElse("#000000").toUpperCase)) //drawn with black or grey
       case _ => false
     }
 
   def main(args: Array[String]):Unit= {
     //val loc = "data/10.1.1.108.9317-Figure-4.svg"
     //val loc = "data/10.1.1.105.5053-Figure-6.svg"
-    val loc="src/test/resources/hassan-Figure-2.svg"
+    //val loc="src/test/resources/hassan-Figure-2.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
     //val loc="data/10.1.1.112.9247-Figure-4.svg"
+    val loc="data/10.1.1.100.3286-Figure-9.svg" //this is a good example. two paths, one drawn by a dashed
+    // array and one by a straight line completely overlap, therefore you will get to see the second path as one of the axes lines.
 
     val svgPaths=
      if (loc.contains("-sps")) //this SVG has already paths split
-      SVGPathExtract(loc, true).groupBy(x => x.svgPath.pdContent).map(_._2.head).toIndexedSeq //this step is done to remove duplicate paths that can come from "close" paths
+      SVGPathExtract(loc, true)
     else
        SVGPathExtract(loc,false).map(
          c=>
@@ -89,7 +97,7 @@ object SeparateAxesGridTickPaths {
              CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
              Seq.empty[SVGPathCurve]
            )
-       ).flatten.groupBy(x => x.svgPath.pdContent).map(_._2.head).toIndexedSeq
+       ).flatten
 
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat

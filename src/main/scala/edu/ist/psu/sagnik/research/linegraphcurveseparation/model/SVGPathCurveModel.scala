@@ -7,17 +7,20 @@ import scala.xml.NodeSeq
  * Created by sagnik on 3/4/16.
  */
 
-// see https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Fills_and_Strokes
+//TODO: we are using string for all style elements, while they can be other data structures such as array.
+// See https://www.w3.org/TR/SVG/painting.html#FillProperties and https://www.w3.org/TR/SVG/painting.html#StrokeProperties
 case class PathStyle(
-                     fill:String,
-                     stroke:String,
-                     strokeWidth:String,
-                     strokeLinecap:String,
-                     strokeLinejoin:String,
-                     strokeMiterlimit:String,
-                     strokeDasharray:String, //TODO: this should actually be a Float sequence, but we can handle that later.
-                     strokeOpacity:String,
-                     fillOpacity:String
+                     fill:Option[String],
+                     fillRule:Option[String],
+                     fillOpacity:Option[String],
+                     stroke:Option[String],
+                     strokeWidth:Option[String],
+                     strokeLinecap:Option[String],
+                     strokeLinejoin:Option[String],
+                     strokeMiterlimit:Option[String],
+                     strokeDasharray:Option[String],
+                     strokeDashoffset:Option[String],
+                     strokeOpacity:Option[String]
                       )
 
 
