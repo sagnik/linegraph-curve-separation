@@ -63,7 +63,7 @@ object SeparateAxesGridTickPaths {
     }
   }
 
-  val AXESRATIOTHRESHOLD=0.6f
+  val AXESRATIOTHRESHOLD=0.1f
 
   def isAxesOrGrid(x:SVGPathCurve,W:Float,H:Float):Boolean=
     if (x.svgPath.pOps.length<2 || !x.svgPath.pOps(0).isInstanceOf[Move] || !x.svgPath.pOps(1).isInstanceOf[Line])
@@ -89,7 +89,7 @@ object SeparateAxesGridTickPaths {
      if (loc.contains("-sps")) //this SVG has already paths split
       SVGPathExtract(loc, true)
     else
-       SVGPathExtract(loc,false).map(
+       SVGPathExtract(loc,false).flatMap(
          c=>
            SplitPaths.splitPath(
              c.svgPath.pOps.slice(1,c.svgPath.pOps.length),
@@ -97,12 +97,22 @@ object SeparateAxesGridTickPaths {
              CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
              Seq.empty[SVGPathCurve]
            )
-       ).flatten
+       )
+
+    val (fillExists,noFill)=svgPaths.partition(x=> {
+      (x.pathStyle.fill match{
+        case Some(fill) => true
+        case _ => false
+      }) && ("none".equals(x.pathStyle.stroke.getOrElse("none")) || "#ffffff".equals(x.pathStyle.stroke.getOrElse("#ffffff")))
+    }
+    )
+
+
 
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
-    val (axes,tics,_)=SeparateAxesGridTickPaths(svgPaths,width,height)
+    val (axes,tics,_)=SeparateAxesGridTickPaths(noFill,width,height)
     SVGWriter(axes++tics,loc,"ats")
   }
 }

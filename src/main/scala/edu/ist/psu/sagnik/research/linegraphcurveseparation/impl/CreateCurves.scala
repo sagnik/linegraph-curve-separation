@@ -23,7 +23,7 @@ object CreateCurves {
       if (loc.contains("-sps")) //this SVG has already paths split
         SVGPathExtract(loc, true)
       else
-        SVGPathExtract(loc,false).map(
+        SVGPathExtract(loc,false).flatMap(
           c=>
             SplitPaths.splitPath(
               c.svgPath.pOps.slice(1,c.svgPath.pOps.length),
@@ -31,12 +31,19 @@ object CreateCurves {
               CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
               Seq.empty[SVGPathCurve]
             )
-        ).flatten
+        )
+    val (fillExists,noFill)=svgPaths.partition(x=> {
+      (x.pathStyle.fill match{
+        case Some(fill) => true
+        case _ => false
+      }) && ("none".equals(x.pathStyle.stroke.getOrElse("none")) || "#ffffff".equals(x.pathStyle.stroke.getOrElse("#ffffff")))
+    }
+    )
 
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
-    val (axes,tics,curvePaths)=SeparateAxesGridTickPaths(svgPaths,width,height)
+    val (axes,tics,curvePaths)=SeparateAxesGridTickPaths(noFill,width,height)
 
     val curveGroups=colorBasedSegmentation(curvePaths)
 
@@ -60,7 +67,13 @@ object CreateCurves {
   }
 
   def main(args: Array[String]):Unit= {
-    val loc="src/test/resources/hassan-Figure-2.svg"
+    //val loc="src/test/resources/hassan-Figure-2.svg"
+    //val loc="data/10.1.1.120.143-Figure-12.svg"
+    //val loc="data/10.1.1.77.6281-Figure-8.svg"
+    //val loc="data/10.1.1.172.4429-Figure-7.svg"
+    //val loc="data/10.1.1.104.5833-Figure-7.svg"
+    //val loc="data/10.1.1.106.6209-Figure-10.svg"
+    val loc="data/10.1.1.100.3286-Figure-9.svg"
     CreateCurves(loc,true)
 
   }

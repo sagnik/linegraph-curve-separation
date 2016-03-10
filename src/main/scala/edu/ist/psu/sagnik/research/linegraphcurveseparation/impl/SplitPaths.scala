@@ -142,15 +142,21 @@ object SplitPaths {
   def apply(loc:String)={
       val cS= SVGPathExtract(loc,false)
       //Seq(svgpathCurves(0)).foreach(x=>println(x.svgPath.id,x.svgPath.pdContent,x.svgPath.pOps))
-      val spPath=cS.map(
-        c=>
-          SplitPaths.splitPath(
-            c.svgPath.pOps.slice(1,c.svgPath.pOps.length),
-            c,
-            CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x,c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
-            Seq.empty[SVGPathCurve]
-          )
-      ).flatten
+      val (fillExists,noFill)=cS.partition(x=> {
+        (x.pathStyle.fill match{
+          case Some(fill) => true
+          case _ => false
+        }) && ("none".equals(x.pathStyle.stroke.getOrElse("none")) || "#ffffff".equals(x.pathStyle.stroke.getOrElse("#ffffff")))
+      }
+      )
+
+      val spPath=noFill.flatMap(c =>
+        SplitPaths.splitPath(
+          c.svgPath.pOps.slice(1, c.svgPath.pOps.length),
+          c,
+          CordPair(c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.x, c.svgPath.pOps(0).args(0).asInstanceOf[MovePath].eP.y),
+          Seq.empty[SVGPathCurve]
+        ))
       SVGWriter(spPath,loc,"sps")
     }
 }
@@ -159,7 +165,8 @@ object TestSplitPaths{
   def main(args: Array[String]):Unit= {
     //val loc="src/test/resources/hassan-Figure-2.svg"
     //val loc="data/10.1.1.164.2702-Figure-2.svg"
-    val loc="data/10.1.1.100.3286-Figure-9.svg"
+    //val loc="data/10.1.1.100.3286-Figure-9.svg"
+    val loc="data/10.1.1.104.3077-Figure-1.svg"
     SplitPaths(loc)
   }
 

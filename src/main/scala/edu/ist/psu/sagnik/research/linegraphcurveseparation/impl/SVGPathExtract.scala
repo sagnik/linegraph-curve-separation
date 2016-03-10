@@ -37,7 +37,7 @@ object SVGPathExtract {
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
       .filterNot(a=>
       ("#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")) && "none".equals(a.pathStyle.stroke.getOrElse("none"))) || //the path has no color, either from fill or stroke
-        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")))
+        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "#none".equals(a.pathStyle.fill.getOrElse("#000000")))
       )
 
   }
@@ -69,7 +69,7 @@ object SVGPathExtract {
     ).map(x=>SVGPathXML(svgPath=SVGPathBB(x.svgPath),styleXML = x.styleXML)).map(x=>getPathStyleObject(x))
       .filterNot(a=>
       ("#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")) && "none".equals(a.pathStyle.stroke.getOrElse("none"))) || //the path has no color, either from fill or stroke
-        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "#ffffff".equals(a.pathStyle.fill.getOrElse("#000000")))
+        ("#ffffff".equals(a.pathStyle.stroke.getOrElse("none")) && "none".equals(a.pathStyle.fill.getOrElse("#000000")))
       )
   }
 
