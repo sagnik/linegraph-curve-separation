@@ -21,9 +21,6 @@ object SVGPathExtract {
   def getPaths(xmlContent:scala.xml.Elem):Seq[SVGPathCurve]= {
     //This is a path splitted file as created by edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.SplitPaths.
     //it doesn't have any group.
-    //println(s" here ${(xmlContent \\ "path").length}")
-
-    println(s" here")
     (xmlContent \ "path").map(x=>
       SVGPathXML(
         svgPath=SVGPath(
