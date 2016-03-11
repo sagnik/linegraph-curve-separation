@@ -1,6 +1,6 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{Rectangle, SVGPathCurve}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{SVGCurve, Rectangle, SVGPathCurve}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.{MovePath, CordPair}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
 
@@ -8,6 +8,7 @@ import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
  * Created by szr163 on 3/10/16.
  */
 object MarkerDetection {
+
 
   def apply(loc:String,createImages:Boolean)={
     val svgPaths=
@@ -36,11 +37,7 @@ object MarkerDetection {
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
     val (axes,tics,curvePaths)=SeparateAxesGridTickPaths(noFill,width,height)
 
-    val nonOverLapping=curvePaths.filter(x=> !curvePaths.exists(y=>Rectangle.rectInterSects(x.svgPath.bb.get,y.svgPath.bb.get)))
-    println(nonOverLapping.length)
-    //if (createImages){
-    //
-    //}
+    curvePaths.foreach(x=>println(s" [pathDstring]: ${x.svgPath.pdContent}, [bb]: ${Rectangle.asCoordinatesStr(x.svgPath.bb.get)}  "))
   }
 
   def main(args: Array[String]):Unit= {

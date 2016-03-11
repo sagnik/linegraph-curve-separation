@@ -23,7 +23,7 @@ object Rectangle {
    * point information as x1,y2,x2,y2 .
    */
   def asCoordinatesStr(r: Rectangle): String =
-    s"${r.x1},${r.y1},${r.x2},${r.y2}"
+    s"${round(r.x1)},${round(r.y1)},${round(r.x2)},${round(r.y2)}"
 
 
   def rectInterSects(r1:Rectangle,r2:Rectangle):Boolean={
