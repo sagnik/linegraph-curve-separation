@@ -16,15 +16,13 @@ class Combination[A] {
         r - 1,
         ls,
         rejectFunc
-      ).flatMap(x => for (l <- ls if !rejectFunc(l,x)) yield x :+ l ).map(x=>x.toSet).distinct.map(y=>y.toList)
+      ).flatMap(x => for (l <- ls if !(x.contains(l) || rejectFunc(l,x))) yield x :+ l ).map(x=>x.toSet).distinct.map(y=>y.toList)
 }
 
 object TestCombination{
 
   //reject function will say if an element l should be put into a list ls. If it returns true, we should NOT put l in ls.
-  def myrejectFunc[A](l:A, ls:List[A]):Boolean= ls.contains(l) ||
-    //custom logic here
-    {
+  def myrejectFunc[A](l:A, ls:List[A]):Boolean= //custom logic here, ex, a 3 combintation of elements with 2 not present.
       if ( l.isInstanceOf[Int] && ls.forall(a=>a.isInstanceOf[Int])){
         val ils=ls.map(x=>x.asInstanceOf[Int])
         val il=l.asInstanceOf[Int]
@@ -32,7 +30,7 @@ object TestCombination{
         //!ils.exists(x=>((il-x)==1)||((x-il)==1))
       }
       else false
-    }
+
 
   def main(args:Array[String])={
     val l=List(1,2,3,4,5)
