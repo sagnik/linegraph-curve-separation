@@ -3,6 +3,7 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{SVGCurve, Rectangle, SVGPathCurve}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.pathparser.model.{MovePath, CordPair}
 import edu.ist.psu.sagnik.research.linegraphcurveseparation.reader.XMLReader
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.writer.SVGWriter
 
 /**
  * Created by szr163 on 3/10/16.
@@ -35,10 +36,23 @@ object MarkerDetection {
     //TODO: possible exceptions
     val height = ((XMLReader(loc) \\ "svg")(0) \@ "height").toFloat
     val width = ((XMLReader(loc) \\ "svg")(0) \@ "width").toFloat
-    val (axes,tics,curvePaths)=SeparateAxesGridTickPaths(noFill,width,height)
+    val (axes,tics,cPaths)=SeparateAxesGridTickPaths(noFill,width,height)
+    val curvePaths=cPaths.filterNot(x=>{x.svgPath.bb match {case Some(bb)=> bb.x1==bb.x2 && bb.y1==bb.y2; case _ => false}})
 
-    curvePaths.foreach(x=>println(s" [pathDstring]: ${x.svgPath.pdContent}, [bb]: ${Rectangle.asCoordinatesStr(x.svgPath.bb.get)}  "))
+    def isHV(x:SVGPathCurve)=MarkerHelper.isHV(x)
+    def isH(x:SVGPathCurve)=MarkerHelper.isH(x)
+    def isV(x:SVGPathCurve)=MarkerHelper.isV(x)
+    def hvTouches(x:SVGPathCurve,y:SVGPathCurve)=MarkerHelper.hvTouches(x,y)
+    def createsSquare(xs:Seq[SVGPathCurve])=MarkerHelper.createsSquare(xs)
+
+    val (testPaths,rest)= curvePaths.partition(x=>curvePaths.exists(y=>hvTouches(x,y))) //creates squares
+    //val testPaths= (curvePaths.combinations(4).filter(xs=>createsSquare(xs))).flatten.toIndexedSeq.distinct //this works, but extremely slow due to the combination step
+    println(testPaths.length)
+
+    if (createImages) SVGWriter(testPaths,loc,"sq")
+
   }
+
 
   def main(args: Array[String]):Unit= {
     val loc="data/10.1.1.100.3286-Figure-9.svg"
