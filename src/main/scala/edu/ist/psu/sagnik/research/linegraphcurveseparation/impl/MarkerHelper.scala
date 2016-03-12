@@ -28,6 +28,22 @@ object MarkerHelper {
 
   }
 
+  def hvIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean={
+    if (p1.equals(p2)) false
+    else if (!isHV(p1) || !isHV(p2)) false
+    else if (isH(p1) && isH(p2)) false
+    else if (isV(p1) && isV(p2)) false
+    //at this point we know the path has a bounding box, so getOrElse is not needed.
+    else {
+      val bbH = if (isH(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
+      val bbV = if (isV(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
+      //(bbH.y1==(bbV.y1+bbV.y2)/2) && (bbV.x1==(bbH.x1+bbH.x2)/2)
+      //!Rectangle.rectTouches(bbH,bbV)
+      !((bbH.x1 == bbV.x1) || (bbH.x2 == bbV.x1)) && Rectangle.rectInterSects(bbH,bbV)
+    }
+
+  }
+
   def createsSquare(xs:Seq[SVGPathCurve]):Boolean={
     if ((xs.map(isHV(_)).forall(a=>a))) false //there's at least one non HV line
     xs.forall(a=>xs.exists(y=>hvTouches(a,y)))

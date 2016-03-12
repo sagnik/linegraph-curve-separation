@@ -41,18 +41,30 @@ object MarkerDetection {
 
     def hvTouches(x:SVGPathCurve,y:SVGPathCurve)=MarkerHelper.hvTouches(x,y)
     def createsSquare(xs:Seq[SVGPathCurve])=MarkerHelper.createsSquare(xs)
+    def hvIntersects(x:SVGPathCurve,y:SVGPathCurve)=MarkerHelper.hvIntersects(x,y)
 
-    val (testPaths,rest)= curvePaths.partition(x=>curvePaths.exists(y=>hvTouches(x,y))) //creates squares
     //val testPaths= (curvePaths.combinations(4).filter(xs=>createsSquare(xs))).flatten.toIndexedSeq.distinct //this works, but extremely slow due to the combination step
-    println(testPaths.length)
 
-    if (createImages) SVGWriter(testPaths,loc,"sq")
+
+    val (sqPaths,nonSqPaths)= curvePaths.partition(x=>curvePaths.filter(y=>hvTouches(x,y)).length>=2) //creates squares and rectangles. Can't distinguish between square and rectangles.
+    println(s"number of square paths: ${sqPaths.length}")
+
+    val (plusPaths,rest)=nonSqPaths.partition(x=>curvePaths.filter(y=>hvIntersects(x,y)).length==1)
+    println(s"number of plus paths: ${plusPaths.length}")
+
+    if (createImages) {
+      if (sqPaths.nonEmpty) SVGWriter(sqPaths,loc,"sq")
+      if (plusPaths.nonEmpty) SVGWriter(plusPaths,loc,"plus")
+
+    }
 
   }
 
 
   def main(args: Array[String]):Unit= {
     val loc="data/10.1.1.100.3286-Figure-9.svg"
+    //val loc="data/10.1.1.104.3077-Figure-1.svg"
+    //val loc="data/10.1.1.105.5053-Figure-2.svg"
     MarkerDetection(loc,true)
 
   }
