@@ -39,9 +39,6 @@ object MarkerDetection {
     val (axes,tics,cPaths)=SeparateAxesGridTickPaths(noFill,width,height)
     val curvePaths=cPaths.filterNot(x=>{x.svgPath.bb match {case Some(bb)=> bb.x1==bb.x2 && bb.y1==bb.y2; case _ => false}})
 
-    def isHV(x:SVGPathCurve)=MarkerHelper.isHV(x)
-    def isH(x:SVGPathCurve)=MarkerHelper.isH(x)
-    def isV(x:SVGPathCurve)=MarkerHelper.isV(x)
     def hvTouches(x:SVGPathCurve,y:SVGPathCurve)=MarkerHelper.hvTouches(x,y)
     def createsSquare(xs:Seq[SVGPathCurve])=MarkerHelper.createsSquare(xs)
 
