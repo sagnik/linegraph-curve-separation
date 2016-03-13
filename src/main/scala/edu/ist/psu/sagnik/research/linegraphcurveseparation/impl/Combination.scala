@@ -1,5 +1,7 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.impl
 
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.model.{Rectangle, SVGPathCurve}
+
 /**
  * Created by szr163 on 3/11/16.
  */
@@ -27,28 +29,38 @@ class Combination[A] {
       )
 }
 
+object RejectFunctions{
+  //reject function will say if an element l should be put into a list ls. If it returns true, we should NOT put l in ls.
+  def myRejectFunc[A](l:A, ls:List[A]):Boolean= //custom logic here, ex, a 3 combination of elements with 2 not present.
+    if ( l.isInstanceOf[Int] && ls.forall(a=>a.isInstanceOf[Int])){
+      val ils=ls.map(x=>x.asInstanceOf[Int])
+      val il=l.asInstanceOf[Int]
+      (il::ils).contains(2)
+    }
+    else false
+
+  def myRejectFunc2[A](l:A, ls:List[A]):Boolean= false
+
+  def rectangleOverLapReject[A](l:A, ls:List[A]):Boolean={
+    if ( l.isInstanceOf[SVGPathCurve] && ls.forall(a=>a.isInstanceOf[SVGPathCurve])){
+      val ils=ls.map(x=>x.asInstanceOf[SVGPathCurve].svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)))
+      val il=l.asInstanceOf[SVGPathCurve].svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f))
+      !(ils.exists(x=>Rectangle.rectInterSects(x,il)))
+    }
+    else false
+  }
+
+}
+
 object TestCombination{
 
   def time[R](block: => R): R = {
     val t0 = System.nanoTime()
     val result = block    // call-by-name
     val t1 = System.nanoTime()
-    println("Elapsed time: " + (t1 - t0) + "ns")
+    println("Elapsed time: " + (t1 - t0)/1000000 + "ms")
     result
   }
-
-  //reject function will say if an element l should be put into a list ls. If it returns true, we should NOT put l in ls.
-  def myrejectFunc[A](l:A, ls:List[A]):Boolean= //custom logic here, ex, a 3 combintation of elements with 2 not present.
-      if ( l.isInstanceOf[Int] && ls.forall(a=>a.isInstanceOf[Int])){
-        val ils=ls.map(x=>x.asInstanceOf[Int])
-        val il=l.asInstanceOf[Int]
-        (il::ils).contains(2)
-        //!ils.exists(x=>((il-x)==1)||((x-il)==1))
-      }
-      else false
-
-  def myrejectFunc2[A](l:A, ls:List[A]):Boolean= false
-
   def main(args:Array[String]):Unit={
     val l=(1 to 1000).toList
     val r=2
@@ -59,7 +71,7 @@ object TestCombination{
     assert(
     time{l.combinations(r).filterNot(x=>x.contains(2)).toList}
       ==
-    time{new Combination[Int].combinationTL[Int](r,1,l,myrejectFunc,l.map(x=>List(x)))}
+    time{new Combination[Int].combinationTL[Int](r,1,l,RejectFunctions.myRejectFunc,l.map(x=>List(x)))}
     )
   }
 }

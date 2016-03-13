@@ -43,18 +43,31 @@ object MarkerDetection {
     def createsSquare(xs:Seq[SVGPathCurve])=MarkerHelper.createsSquare(xs)
     def hvIntersects(x:SVGPathCurve,y:SVGPathCurve)=MarkerHelper.hvIntersects(x,y)
 
-    //val testPaths= (curvePaths.combinations(4).filter(xs=>createsSquare(xs))).flatten.toIndexedSeq.distinct //this works, but extremely slow due to the combination step
+
+    /*val testPaths1= TestCombination.time(curvePaths.combinations(3).toList)
+    val testPaths2= TestCombination.time(
+      new Combination[SVGPathCurve].combinationTL[SVGPathCurve](4,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
+    )*/
 
 
-    val (sqPaths,nonSqPaths)= curvePaths.partition(x=>curvePaths.filter(y=>hvTouches(x,y)).length>=2) //creates squares and rectangles. Can't distinguish between square and rectangles.
+    val fourPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](4,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
+    val threePaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](3,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
+    val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
+
+    val sqPaths= (fourPaths.filter(xs=>createsSquare(xs))).flatten.toIndexedSeq.distinct //this works, but extremely slow due to the combination step
+
+
+    //val (sqPaths,nonSqPaths)= curvePaths.partition(x=>curvePaths.filter(y=>hvTouches(x,y)).length>=2) //creates squares and rectangles. Can't distinguish between square and rectangles.
     println(s"number of square paths: ${sqPaths.length}")
 
+/*
     val (plusPaths,rest)=nonSqPaths.partition(x=>curvePaths.filter(y=>hvIntersects(x,y)).length==1)
     println(s"number of plus paths: ${plusPaths.length}")
+*/
 
     if (createImages) {
       if (sqPaths.nonEmpty) SVGWriter(sqPaths,loc,"sq")
-      if (plusPaths.nonEmpty) SVGWriter(plusPaths,loc,"plus")
+      //if (plusPaths.nonEmpty) SVGWriter(plusPaths,loc,"plus")
 
     }
 
