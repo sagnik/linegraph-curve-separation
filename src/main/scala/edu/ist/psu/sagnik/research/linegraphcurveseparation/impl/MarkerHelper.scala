@@ -45,8 +45,12 @@ object MarkerHelper {
   }
 
   def createsSquare(xs:Seq[SVGPathCurve]):Boolean={
-    if ((xs.map(isHV(_)).forall(a=>a))) false //there's at least one non HV line
+    (xs.map(isHV(_)).forall(a=>a)) && //there's at least one non HV line
     xs.forall(a=>xs.exists(y=>hvTouches(a,y)))
+  }
+
+  def createsStar(xs:Seq[SVGPathCurve]):Boolean={
+    List(true,true,false,false).toSet.equals(xs.map(isHV(_)).toSet)  //two of the paths are non hV and two of them are HV
   }
 
 }
