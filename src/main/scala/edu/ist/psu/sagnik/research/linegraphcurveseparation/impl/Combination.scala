@@ -41,7 +41,8 @@ object RejectFunctions{
 
   def myRejectFunc2[A](l:A, ls:List[A]):Boolean= false
 
-  def rectangleOverLapReject[A](l:A, ls:List[A]):Boolean={
+  //OrElse(Rectangle(0f,0f,0f,0f))
+  def rectangleNotOverLapReject[A](l:A, ls:List[A]):Boolean={
     if ( l.isInstanceOf[SVGPathCurve] && ls.forall(a=>a.isInstanceOf[SVGPathCurve])){
       val ils=ls.map(x=>x.asInstanceOf[SVGPathCurve].svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f)))
       val il=l.asInstanceOf[SVGPathCurve].svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f))
@@ -49,6 +50,17 @@ object RejectFunctions{
     }
     else false
   }
+
+  def styleNotMatchReject[A](l:A, ls:List[A]):Boolean={
+    if ( l.isInstanceOf[SVGPathCurve] && ls.forall(a=>a.isInstanceOf[SVGPathCurve])){
+      val ils=ls.map(x=>x.asInstanceOf[SVGPathCurve].pathStyle)
+      val il=l.asInstanceOf[SVGPathCurve].pathStyle
+      ils.exists(x=> !x.equals(il))
+    }
+    else false
+  }
+
+  def styleOverlapUnmatchedReject[A](l:A, ls:List[A]):Boolean=rectangleNotOverLapReject[A](l,ls)||styleNotMatchReject[A](l,ls)
 
 }
 
