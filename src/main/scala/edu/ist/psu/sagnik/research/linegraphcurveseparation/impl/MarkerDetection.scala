@@ -49,6 +49,7 @@ object MarkerDetection {
     def createsDiamond(xs:Seq[SVGPathCurve])=MarkerHelper.createsDiamond(xs)
     def createsCaret(xs:Seq[SVGPathCurve])=MarkerHelper.createsCaret(xs,"left")
 
+    /******* markers that are combination of four paths: squares, stars and diamonds ******/
     val fourPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
     4,
     1,
@@ -61,10 +62,20 @@ object MarkerDetection {
     val (diamondPaths,nonDiamondPaths)=nonSqPaths.partition(xs=>createsDiamond(xs))
     val (starPaths,nonStarPaths)=nonDiamondPaths.partition(xs=>createsStar(xs))
 
-    println(curvePaths.length,fourPaths.length,sqPaths.length,nonSqPaths.length,starPaths.length,nonStarPaths.length)
+    //println(curvePaths.length,fourPaths.length,sqPaths.length,nonSqPaths.length,starPaths.length,nonStarPaths.length)
+
+    /******* markers that are combination of three paths: triangles ******/
+    val rest=curvePaths diff (sqPaths.flatten.distinct++diamondPaths.flatten.distinct++starPaths.flatten.distinct)
+    val threePaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
+      3,
+      1,
+      curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,
+      rest.toList.map(x=>List(x))
+    )
+
+    
 
 
-    //val threePaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](3,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
     //val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,curvePaths.toList.map(x=>List(x)))
     //val (caretPaths,nonCaretPaths) = twoPaths.partition(xs=>createsCaret(xs))
     //println(curvePaths.length,twoPaths.length,caretPaths.length,nonCaretPaths.length)
