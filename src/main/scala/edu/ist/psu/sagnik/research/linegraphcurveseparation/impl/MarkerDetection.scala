@@ -49,7 +49,6 @@ object MarkerDetection {
     def createsDiamond(xs:Seq[SVGPathCurve])=MarkerHelper.createsDiamond(xs)
     def createsCaret(xs:Seq[SVGPathCurve])=MarkerHelper.createsCaret(xs,"left")
 
-/*
     val fourPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
     4,
     1,
@@ -60,29 +59,29 @@ object MarkerDetection {
 
     val (sqPaths,nonSqPaths) = fourPaths.partition(xs=>createsSquare(xs))
     val (diamondPaths,nonDiamondPaths)=nonSqPaths.partition(xs=>createsDiamond(xs))
+    val (starPaths,nonStarPaths)=nonDiamondPaths.partition(xs=>createsStar(xs))
 
-    println(curvePaths.length,fourPaths.length,sqPaths.length,nonSqPaths.length,diamondPaths.length,nonDiamondPaths.length)
+    println(curvePaths.length,fourPaths.length,sqPaths.length,nonSqPaths.length,starPaths.length,nonStarPaths.length)
 
 
-    val threePaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](3,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
-*/
-
-    val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,curvePaths.toList.map(x=>List(x)))
-    val (caretPaths,nonCaretPaths) = twoPaths.partition(xs=>createsCaret(xs))
-    println(curvePaths.length,twoPaths.length,caretPaths.length,nonCaretPaths.length)
+    //val threePaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](3,1,curvePaths.toList,RejectFunctions.rectangleOverLapReject,curvePaths.toList.map(x=>List(x)))
+    //val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,curvePaths.toList.map(x=>List(x)))
+    //val (caretPaths,nonCaretPaths) = twoPaths.partition(xs=>createsCaret(xs))
+    //println(curvePaths.length,twoPaths.length,caretPaths.length,nonCaretPaths.length)
 
     if (createImages) {
-      //if (sqPaths.nonEmpty) SVGWriter(sqPaths.flatten.distinct,loc,"sq")
-      //if (nonSqPaths.nonEmpty) SVGWriter(diamondPaths.flatten.distinct,loc,"dm")
-      if (caretPaths.nonEmpty) SVGWriter(caretPaths.flatten.distinct,loc,"lc")
+      if (sqPaths.flatten.distinct.nonEmpty) SVGWriter(sqPaths.flatten.distinct,loc,"sq")
+      if (diamondPaths.flatten.distinct.nonEmpty) SVGWriter(diamondPaths.flatten.distinct,loc,"dm")
+      if (starPaths.flatten.distinct.nonEmpty) SVGWriter(starPaths.flatten.distinct,loc,"star")
+      //if (caretPaths.nonEmpty) SVGWriter(caretPaths.flatten.distinct,loc,"lc")
     }
 
   }
 
 
   def main(args: Array[String]):Unit= {
-    val loc="data/10.1.1.100.3286-Figure-9.svg"
-    //val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
+    //val loc="data/10.1.1.100.3286-Figure-9.svg"
+    val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
     //val loc="data/10.1.1.104.3077-Figure-1.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
     MarkerDetection(loc,true)
