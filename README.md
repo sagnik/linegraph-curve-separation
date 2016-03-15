@@ -10,7 +10,7 @@ Remove the directory `src/test/resources/hassan-Figure-2` if exists. On SBT cons
 
 #### Work in Progress
 
-Black and white and greyscale line graphs. We can now detect three markers: rectangles, stars and diamonds.
+Black and white and greyscale line graphs. We can now detect four markers: rectangles, stars, diamonds and triangles.
                      
                      
 
