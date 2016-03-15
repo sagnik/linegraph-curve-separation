@@ -12,7 +12,7 @@ object MarkerHelper {
 
   def isHV(x:SVGPathCurve):Boolean=isH(x) || isV(x)
 
-  def hvTouches(p1:SVGPathCurve,p2:SVGPathCurve):Boolean={
+  def hvTouches(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=
     if (p1.equals(p2)) false
     else if (!isHV(p1) || !isHV(p2)) false
     else if (isH(p1) && isH(p2)) false
@@ -21,14 +21,12 @@ object MarkerHelper {
     else {
       val bbH = if (isH(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
       val bbV = if (isV(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
-      //(bbH.y1==(bbV.y1+bbV.y2)/2) && (bbV.x1==(bbH.x1+bbH.x2)/2)
-      //!Rectangle.rectTouches(bbH,bbV)
       (bbH.x1 == bbV.x1) || (bbH.x2 == bbV.x1)
     }
 
-  }
 
-  def hvIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean={
+
+  def hvIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=
     if (p1.equals(p2)) false
     else if (!isHV(p1) || !isHV(p2)) false
     else if (isH(p1) && isH(p2)) false
@@ -37,15 +35,12 @@ object MarkerHelper {
     else {
       val bbH = if (isH(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
       val bbV = if (isV(p1)) p1.svgPath.bb.get else p2.svgPath.bb.get
-      //(bbH.y1==(bbV.y1+bbV.y2)/2) && (bbV.x1==(bbH.x1+bbH.x2)/2)
-      //!Rectangle.rectTouches(bbH,bbV)
       !((bbH.x1 == bbV.x1) || (bbH.x2 == bbV.x1)) && Rectangle.rectInterSects(bbH,bbV)
-      //Rectangle.rectInterSects(bbH,bbV)
     }
 
-  }
 
-  def pathIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean={
+
+  def pathIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=
     if (p1.equals(p2)) false
     else {
       val bb1 = p1.svgPath.bb.getOrElse(Rectangle(0f,0f,0f,0f))
@@ -55,9 +50,9 @@ object MarkerHelper {
       else
         Rectangle.rectInterSects(bb1,bb2)
     }
-  }
 
-  def nonHVTouches(p1:SVGPathCurve,p2:SVGPathCurve):Boolean={
+
+  def nonHVTouches(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=
     if (p1.equals(p2)) false
     else if (isHV(p1) || isHV(p2)) false
     else {
@@ -68,13 +63,7 @@ object MarkerHelper {
       else
         Rectangle.rectInterSects(bb1,bb2)//TODO: check correctness
     }
-  }
 
-  def createsSquare(xs:Seq[SVGPathCurve]):Boolean={
-    (xs.map(a=>a.pathStyle).distinct.length==1) &&
-      (xs.map(a=>isHV(a)).forall(a=>a==true)) && //there's no non HV line
-      xs.forall(a=>xs.filter(y=>hvTouches(a,y)).length==2)
-  }
 
   //TODO: currently the code treats (left and right) & (top & bottom) carets as the same, change in future?
   def isLeftCaret(b1:Rectangle,b2:Rectangle):Boolean= !(Rectangle(0f,0f,0f,0f).equals(b1)||Rectangle(0f,0f,0f,0f).equals(b2))&&
@@ -100,31 +89,54 @@ object MarkerHelper {
       else false
     }
 
+  def isCaret(cs:List[SVGPathCurve]):Boolean=
+    if (cs.length!=2) false
+    else isCaret(cs,"left") || isCaret(cs,"right") || isCaret(cs,"up") || isCaret(cs,"down")
+
+  def isCaret(cs:Seq[SVGPathCurve]):Boolean=isCaret(cs.toList)
+
   def isCaret(p1:SVGPathCurve,p2:SVGPathCurve,dir:String):Boolean= isCaret(List(p1,p2),dir)
 
   def createsCaret(xs:Seq[SVGPathCurve],dir:String): Boolean =
     (xs.map(a=>a.pathStyle).distinct.length==1) &&
-      (xs.map(a=>isHV(a)).forall(a=>a==false)) &&
+      !xs.exists(a=>isHV(a)) &&
       isCaret(xs.toList,dir)
 
-  //TODO: incomplete
-  def createsStar(xs:Seq[SVGPathCurve]):Boolean={
-    (xs.map(a=>a.pathStyle).distinct.length==1) &&
-      (xs.filter(a=>isHV(a)).length==2 && xs.filter(a=> !isHV(a)).length==2)&& //two of the paths are non hV and two of them are HV
-      xs.forall(x=>xs.filter(y=>pathIntersects(x,y)).length==3) && //each path intersect with every other path
-      xs.filter(x=> !isHV(x))(0).svgPath.bb.equals(xs.filter(x=> !isHV(x))(1).svgPath.bb) //non hv paths have the same bb.
-  }
+  /************************* actual shapes *****************************************************/
+  def createsSquare(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length==4 &&
+    (xs.map(a=>a.pathStyle).distinct.length==1) && //the paths are drawn with same style
+      xs.forall(isHV(_)) && //there's no non HV line
+      xs.forall(a=>xs.count(y=>hvTouches(a,y))==2)
 
-  def createsDiamond(xs:Seq[SVGPathCurve]):Boolean={
+
+
+  def createsStar(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length==4 &&
     (xs.map(a=>a.pathStyle).distinct.length==1) &&
-      (xs.map(a=>isHV(a)).forall(a=>a==false)) && //there's no HV line
+      xs.count(a=>isHV(a))==2 && //two of the paths are non hV and two of them are HV
+      xs.forall(x=>xs.count(y=>pathIntersects(x,y))==3) && //each path intersect with every other path
+      xs.filter(x=> !isHV(x))(0).svgPath.bb.equals(xs.filter(x=> !isHV(x))(1).svgPath.bb) //non hv paths have the same bb.
+
+
+  def createsDiamond(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length==4 &&
+    (xs.map(a=>a.pathStyle).distinct.length==1) &&
+      !xs.exists(a=>isHV(a)) && //there's no HV line
       {
         xs.combinations(2).toList.exists(a=>isCaret(a.toList,"up")) &&
           xs.combinations(2).toList.exists(a=>isCaret(a.toList,"left")) &&
           xs.combinations(2).toList.exists(a=>isCaret(a.toList,"right")) &&
           xs.combinations(2).toList.exists(a=>isCaret(a.toList,"down"))
       }
-  }
+
+
+  def createsTriangle(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length == 3 &&
+      (xs.map(a => a.pathStyle).distinct.length == 1) &&
+      (xs.count(isHV(_)) == 1) && //there's exactly one HV line
+      isCaret(xs.filter(!isHV(_)))
+
 
 
 
