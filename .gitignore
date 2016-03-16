@@ -19,7 +19,7 @@ new/
 .idea*
 verboseresults*
 data/*
-
+src/resources/test/
 
 
 # sbt specific

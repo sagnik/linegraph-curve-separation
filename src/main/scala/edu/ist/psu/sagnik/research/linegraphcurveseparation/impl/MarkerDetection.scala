@@ -102,7 +102,16 @@ object MarkerDetection {
 
     def pathIntersects(p1:SVGPathCurve,p2:SVGPathCurve)=MarkerHelper.pathIntersects(p1,p2)
 
-    //val restSqInterSections= rest.filter(x=>sqPaths.flatten.distinct.exists(pathIntersects(_,x)))
+    //val restStyleDictionary=rest.groupBy(_.pathStyle)
+
+    //TODO: following is very heuristic, change as soon as possible
+
+/*
+    val restSqInterSections= rest.filter(x=>sqPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+    val restPlusInterSections= rest.filter(x=>plusPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+    val restStarInterSections= rest.filter(x=>starPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+    val restCrossInterSections=rest.filter(x=>crossPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+*/
 
     //val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,curvePaths.toList.map(x=>List(x)))
     //val (caretPaths,nonCaretPaths) = twoPaths.partition(xs=>createsCaret(xs))
@@ -126,10 +135,10 @@ object MarkerDetection {
     //val loc="data/10.1.1.104.3077-Figure-1.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
 
-    val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
+    //val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
     //val loc="src/test/resources/10.1.1.108.5575-Figure-16.svg"
     //val loc="src/test/resources/10.1.1.113.223-Figure-10.svg"
-    //val loc="src/test/resources/10.1.1.100.3286-Figure-9.svg"
+    val loc="src/test/resources/10.1.1.100.3286-Figure-9.svg"
     MarkerDetection(loc,true)
 
   }
