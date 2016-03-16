@@ -13,7 +13,7 @@ import scala.language.postfixOps
 /**
  * Created by sagnik on 3/5/16.
  */
-object CreateCurves {
+object CreateCurvesColor {
 
   def colorBasedSegmentation(curvePaths:Seq[SVGPathCurve]):Seq[SVGCurve]=
     curvePaths.groupBy(x=> x.pathStyle.stroke.getOrElse("none")).toSeq.zipWithIndex.map{case (d,index)=>SVGCurve(index.toString,d._2)}
@@ -98,7 +98,7 @@ object CreateCurves {
     //val loc="data/10.1.1.106.6209-Figure-10.svg"
 
     val loc="data/10.1.1.100.3286-Figure-9.svg"
-    CreateCurves(loc,true,featureBasedSegmentation)
+    CreateCurvesColor(loc,true,colorBasedSegmentation)
 
 
   }

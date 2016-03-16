@@ -67,16 +67,16 @@ object MarkerHelper {
 
   //TODO: currently the code treats (left and right) & (top & bottom) carets as the same, change in future?
   def isLeftCaret(b1:Rectangle,b2:Rectangle):Boolean= !(Rectangle(0f,0f,0f,0f).equals(b1)||Rectangle(0f,0f,0f,0f).equals(b2))&&
-    ((b1.y2==b2.y1)||(b1.y1==b2.y2))&&(b1.x1==b2.x1)
+    ((b1.y2==b2.y1)||(b1.y1==b2.y2))&&(b1.x1==b2.x1) && (b1.x2-b1.x1).equals(b2.x2-b2.x1)
 
   def isRightCaret(b1:Rectangle,b2:Rectangle):Boolean= !(Rectangle(0f,0f,0f,0f).equals(b1)||Rectangle(0f,0f,0f,0f).equals(b2))&&
-    ((b1.y2==b2.y1)||(b1.y1==b2.y2))&&(b1.x2==b2.x2)
+    ((b1.y2==b2.y1)||(b1.y1==b2.y2))&&(b1.x2==b2.x2) && (b1.x2-b1.x1).equals(b2.x2-b2.x1)
 
   def isUpCaret(b1:Rectangle,b2:Rectangle):Boolean= !(Rectangle(0f,0f,0f,0f).equals(b1)||Rectangle(0f,0f,0f,0f).equals(b2))&&
-    ((b1.x1==b2.x2)||(b1.x2==b2.x1))&&(b1.y1==b2.y1)
+    ((b1.x1==b2.x2)||(b1.x2==b2.x1))&&(b1.y1==b2.y1) && (b1.y2-b1.y1).equals(b2.y2-b2.y1)
 
   def isDownCaret(b1:Rectangle,b2:Rectangle):Boolean= !(Rectangle(0f,0f,0f,0f).equals(b1)||Rectangle(0f,0f,0f,0f).equals(b2))&&
-    ((b1.x1==b2.x2)||(b1.x2==b2.x1))&&(b1.y2==b2.y2)
+    ((b1.x1==b2.x2)||(b1.x2==b2.x1))&&(b1.y2==b2.y2) && (b1.y2-b1.y1).equals(b2.y2-b2.y1)
 
   def isCaret(cs:List[SVGPathCurve],dir:String):Boolean=
     if (cs.length!=2) false
@@ -103,9 +103,28 @@ object MarkerHelper {
       isCaret(xs.toList,dir)
 
   /************************* actual shapes *****************************************************/
+
+  def createsCross(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length == 2 && //the paths are drawn with same style
+      (xs.map(a => a.pathStyle).distinct.length == 1) &&
+      !xs.exists(isHV(_))&& //there's no HV line
+      xs(0).svgPath.bb.equals(xs(1).svgPath.bb)
+
+  def createsPlus(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length == 2 &&
+      (xs.map(a => a.pathStyle).distinct.length == 1) &&
+      xs.forall(isHV(_))//both lines are HV line
+
+
+  def createsTriangle(xs:Seq[SVGPathCurve]):Boolean=
+    xs.length == 3 &&
+      (xs.map(a => a.pathStyle).distinct.length == 1) &&
+      (xs.count(isHV(_)) == 1) && //there's exactly one HV line
+      isCaret(xs.filter(!isHV(_)))
+
   def createsSquare(xs:Seq[SVGPathCurve]):Boolean=
     xs.length==4 &&
-    (xs.map(a=>a.pathStyle).distinct.length==1) && //the paths are drawn with same style
+    (xs.map(a=>a.pathStyle).distinct.length==1) &&
       xs.forall(isHV(_)) && //there's no non HV line
       xs.forall(a=>xs.count(y=>hvTouches(a,y))==2)
 
@@ -122,7 +141,7 @@ object MarkerHelper {
   def createsDiamond(xs:Seq[SVGPathCurve]):Boolean=
     xs.length==4 &&
     (xs.map(a=>a.pathStyle).distinct.length==1) &&
-      !xs.exists(a=>isHV(a)) && //there's no HV line
+      !xs.exists(isHV(_)) && //there's no HV line
       {
         xs.combinations(2).toList.exists(a=>isCaret(a.toList,"up")) &&
           xs.combinations(2).toList.exists(a=>isCaret(a.toList,"left")) &&
@@ -131,11 +150,6 @@ object MarkerHelper {
       }
 
 
-  def createsTriangle(xs:Seq[SVGPathCurve]):Boolean=
-    xs.length == 3 &&
-      (xs.map(a => a.pathStyle).distinct.length == 1) &&
-      (xs.count(isHV(_)) == 1) && //there's exactly one HV line
-      isCaret(xs.filter(!isHV(_)))
 
 
 

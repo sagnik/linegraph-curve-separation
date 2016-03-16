@@ -1,0 +1,9 @@
+rm *-cr.svg
+rm *-pl.svg
+rm *-star.svg
+rm *-sps.svg
+rm *-ats.svg
+rm *-tr.svg
+rm *-sq.svg
+rm *-dm.svg
+rm *-rest.svg

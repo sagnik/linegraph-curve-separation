@@ -59,7 +59,7 @@ object Rectangle {
   def rectBothXExtension(r1:Rectangle,param:Float,maxRect:Rectangle):Rectangle=
     Rectangle(max(maxRect.x1,r1.x1-param),r1.y1,min(maxRect.x2,r1.x2+param),r1.y2)
 
-
+  def rectArea(r:Rectangle):Float=(r.x2-r.x1)*(r.y2-r.y1)
 
   def rectMerge(r1:Rectangle,r2:Rectangle):Rectangle=
     if (Rectangle(0f,0f,0f,0f).equals(r1))

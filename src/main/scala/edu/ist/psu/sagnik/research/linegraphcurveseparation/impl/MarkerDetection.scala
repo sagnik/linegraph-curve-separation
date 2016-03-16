@@ -47,8 +47,10 @@ object MarkerDetection {
     def createsSquare(xs:List[SVGPathCurve])=MarkerHelper.createsSquare(xs.toIndexedSeq)
     def createsStar(xs:List[SVGPathCurve])=MarkerHelper.createsStar(xs.toIndexedSeq)
     def createsDiamond(xs:List[SVGPathCurve])=MarkerHelper.createsDiamond(xs.toIndexedSeq)
-    def createsCaret(xs:List[SVGPathCurve])=MarkerHelper.createsCaret(xs.toIndexedSeq,"left")
-    def createsTraingle(xs:List[SVGPathCurve])=MarkerHelper.createsTriangle(xs.toIndexedSeq)
+    def createsTriangle(xs:List[SVGPathCurve])=MarkerHelper.createsTriangle(xs.toIndexedSeq)
+    def createsCross(xs:List[SVGPathCurve])=MarkerHelper.createsCross(xs.toIndexedSeq)
+    def createsPlus(xs:List[SVGPathCurve])=MarkerHelper.createsPlus(xs.toIndexedSeq)
+
 
     /******* markers that are combination of four paths: squares, stars and diamonds ******/
     val fourPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
@@ -79,7 +81,28 @@ object MarkerDetection {
     //There's no way to distinguish between left a right caret or a top or down caret given JUST the bounding box.
     //TODO: a better caret detection algorithm?
 
-    val(trianglePaths,nonTrianglePaths)=threePaths.partition(createsTraingle(_))
+    val(trianglePaths,nonTrianglePaths)=threePaths.partition(createsTriangle(_))
+
+    val restTwoPaths=curvePaths diff (sqPaths.flatten.distinct++diamondPaths.flatten.distinct++starPaths.flatten.distinct++trianglePaths.flatten.distinct)
+
+    val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
+      2,
+      1,
+      restTwoPaths.toList,
+      RejectFunctions.rectangleNotOverLapReject,
+      restTwoPaths.toList.map(List(_))
+    )
+
+    val (crossPaths,nonCrossPaths)=twoPaths.partition(createsCross(_))
+    val (plusPaths,nonPlusPaths)=nonCrossPaths.partition(createsPlus(_))
+
+    val rest=curvePaths diff (sqPaths.flatten.distinct++diamondPaths.flatten.distinct++starPaths.flatten.distinct++
+      trianglePaths.flatten.distinct++
+      crossPaths.flatten.distinct++plusPaths.flatten.distinct)
+
+    def pathIntersects(p1:SVGPathCurve,p2:SVGPathCurve)=MarkerHelper.pathIntersects(p1,p2)
+
+    //val restSqInterSections= rest.filter(x=>sqPaths.flatten.distinct.exists(pathIntersects(_,x)))
 
     //val twoPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](2,1,curvePaths.toList,RejectFunctions.rectangleNotOverLapReject,curvePaths.toList.map(x=>List(x)))
     //val (caretPaths,nonCaretPaths) = twoPaths.partition(xs=>createsCaret(xs))
@@ -90,6 +113,9 @@ object MarkerDetection {
       if (diamondPaths.flatten.distinct.nonEmpty) SVGWriter(diamondPaths.flatten.distinct,loc,"dm")
       if (starPaths.flatten.distinct.nonEmpty) SVGWriter(starPaths.flatten.distinct,loc,"star")
       if (trianglePaths.flatten.distinct.nonEmpty) SVGWriter(trianglePaths.flatten.distinct,loc,"tr")
+      if (plusPaths.flatten.distinct.nonEmpty) SVGWriter(plusPaths.flatten.distinct,loc,"pl")
+      if (crossPaths.flatten.distinct.nonEmpty) SVGWriter(crossPaths.flatten.distinct,loc,"cr")
+      //SVGWriter(rest,loc,"rest")
     }
 
   }
@@ -97,10 +123,13 @@ object MarkerDetection {
 
   def main(args: Array[String]):Unit= {
     //val loc="data/10.1.1.100.3286-Figure-9.svg"
-    //val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
     //val loc="data/10.1.1.104.3077-Figure-1.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
-    val loc="src/test/resources/10.1.1.108.5575-Figure-16.svg"
+
+    val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
+    //val loc="src/test/resources/10.1.1.108.5575-Figure-16.svg"
+    //val loc="src/test/resources/10.1.1.113.223-Figure-10.svg"
+    //val loc="src/test/resources/10.1.1.100.3286-Figure-9.svg"
     MarkerDetection(loc,true)
 
   }
