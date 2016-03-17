@@ -14,7 +14,7 @@ object SeparateAxesGridTickPaths {
 
   val TMTHRESHOLD=5f
 
-  val AXESCOLORS=Seq("#000000","#696969","#2F4F4F","#696969","#708090","#778899","#808080","#A9A9A9","#D3D3D3")
+  val AXESCOLORS=Seq("#000000","#696969","#2F4F4F","#696969","#708090","#778899","#808080","#A9A9A9","#D3D3D3","#8E9092")
 
   def apply(svgpathCurves: Seq[SVGPathCurve],width:Float,height:Float):(Seq[SVGPathCurve],Seq[SVGPathCurve],Seq[SVGPathCurve])= {
 
