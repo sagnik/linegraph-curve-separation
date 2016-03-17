@@ -17,6 +17,7 @@ We can now detect six  markers: rectangles, stars, diamonds, triangles, plus and
 #### Working examples
 
 Black and white curves: http://personal.psu.edu/szr163/test/test.html
+
 Color curves: http://personal.psu.edu/szr163/hassanfig2.html                     
                      
 
