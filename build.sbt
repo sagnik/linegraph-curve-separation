@@ -8,9 +8,14 @@ scalaVersion := "2.11.7"
 
 javacOptions += "-Xlint:unchecked"
 
-assemblyJarName in assembly := "linegraphcurveseparation-markeronly.jar"
+//change these for black and white curves
 
-mainClass in assembly := Some("edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.MarkerDetection")
+//assemblyJarName in assembly := "linegraphcurveseparation-markeronly.jar"
+
+assemblyJarName in assembly := "linegraphcurveseparation-color.jar"
+
+//mainClass in assembly := Some("edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.MarkerDetection")
+mainClass in assembly := Some("edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.CreateCurvesColor")
 
 test in assembly := {}
 

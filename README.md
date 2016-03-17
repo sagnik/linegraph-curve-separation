@@ -14,7 +14,10 @@ Black and white and greyscale line graphs.
 
 We can now detect six  markers: rectangles, stars, diamonds, triangles, plus and cross. See `src/test/resources/10.1.1.105.5053-Figure-1-*.svg` for an example. Note that these are the markers drawn with paths that don't have a "fill" element.
 
-                     
+#### Working examples
+
+Black and white curves: http://personal.psu.edu/szr163/test/test.html
+Color curves: http://personal.psu.edu/szr163/hassanfig2.html                     
                      
 
     
