@@ -90,14 +90,10 @@ object CreateCurvesColor {
   }
 
   def main(args: Array[String]):Unit= {
-    val loc="src/test/resources/hassan-Figure-2.svg"
-    //val loc="data/10.1.1.120.143-Figure-12.svg"
-    //val loc="data/10.1.1.77.6281-Figure-8.svg"
-    //val loc="data/10.1.1.172.4429-Figure-7.svg"
-    //val loc="data/10.1.1.104.5833-Figure-7.svg"
-    //val loc="data/10.1.1.106.6209-Figure-10.svg"
-
-    //val loc="data/10.1.1.100.3286-Figure-9.svg"
+    val loc= if (args.nonEmpty)
+      args.head
+    else
+    "src/test/resources/hassan-Figure-2.svg"
     CreateCurvesColor(loc,true,colorBasedSegmentation)
 
 

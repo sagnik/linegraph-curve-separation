@@ -179,3 +179,14 @@
       println("Couldn't create directory to store Curve SVG files, exiting.")
     }
   }
+
+
+      //TODO: following is very heuristic, change as soon as possible
+      /*
+        val restSqInterSections= rest.filter(x=>sqPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+        val restPlusInterSections= rest.filter(x=>plusPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+        val restStarInterSections= rest.filter(x=>starPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+        val restCrossInterSections=rest.filter(x=>crossPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
+    */
+
+

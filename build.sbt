@@ -8,7 +8,7 @@ scalaVersion := "2.11.7"
 
 javacOptions += "-Xlint:unchecked"
 
-assemblyJarName in assembly := "linegraphcurveseparation.jar"
+assemblyJarName in assembly := "linegraphcurveseparation-markeronly.jar"
 
 mainClass in assembly := Some("edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.MarkerDetection")
 
