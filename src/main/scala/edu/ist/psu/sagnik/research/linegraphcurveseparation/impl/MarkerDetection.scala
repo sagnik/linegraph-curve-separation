@@ -183,8 +183,9 @@ object MarkerDetection {
     //val loc="src/test/resources/10.1.1.105.5053-Figure-1.svg"
     //val loc="src/test/resources/10.1.1.105.5053-Figure-6.svg"
     //val loc="src/test/resources/10.1.1.108.5575-Figure-16.svg"
-    val loc="src/test/resources/10.1.1.113.223-Figure-10.svg"
+    //val loc="src/test/resources/10.1.1.113.223-Figure-10.svg"
     //val loc="src/test/resources/10.1.1.100.3286-Figure-9.svg"
+    val loc="src/test/resources/10.1.1.113.4715-Figure-2.svg"
     MarkerDetection(loc,true)
 
   }

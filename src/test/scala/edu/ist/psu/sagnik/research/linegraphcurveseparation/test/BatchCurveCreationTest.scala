@@ -17,7 +17,7 @@ class BatchCurveCreationTest extends FunSpec {
       svgFiles.foreach(x=>{
         println(x);
         try {
-          SplitPaths(x)
+          MarkerDetection(x,true)
         }
         catch{
           case a:org.xml.sax.SAXParseException => println(s"ill formed SVG for ${x}")
