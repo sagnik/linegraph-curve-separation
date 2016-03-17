@@ -17,7 +17,7 @@ object MarkerDetection {
   //         _
   // square |_|, diamond: , cross: x, plus: +, triangle: /_\
   //
-  
+
   val MARKERNUMBERTHRESHOLD=5
 
   def createsSquare(xs:List[SVGPathCurve])=MarkerHelper.createsSquare(xs.toIndexedSeq)
@@ -94,8 +94,7 @@ object MarkerDetection {
       trianglePaths.flatten.distinct++
       crossPaths.flatten.distinct++plusPaths.flatten.distinct)
 
-    val restPathsforMarkerCurveByStyle=restPathsforMarkerCurve.groupBy(_.pathStyle).map(_._2.toList).toList //this is a bit of hack, we know two paths with same id (i.e., they came)
-    //from the original SVG path) should have same styles. We are assuming curve paths will be drawn by the same path.
+    val restPathsforMarkerCurveByStyle=restPathsforMarkerCurve.groupBy(_.pathStyle).map(_._2.toList).toList 
 
     val markerCurveDictionary=Map(
       "square" -> (sqPaths.flatten.distinct ++ curvePathsforMarker(restPathsforMarkerCurveByStyle,sqPaths.flatten.distinct,sqPaths.length)),
