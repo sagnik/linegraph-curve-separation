@@ -51,6 +51,8 @@ object MarkerHelper {
         Rectangle.rectInterSects(bb1,bb2)
     }
 
+  def pathSeqIntersects(p1s:Seq[SVGPathCurve],p2s:Seq[SVGPathCurve]):Int=
+    p1s.foldLeft(0)((r,c) => r+p2s.count(pathIntersects(_,c)))
 
   def nonHVTouches(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=
     if (p1.equals(p2)) false

@@ -8,6 +8,12 @@ scalaVersion := "2.11.7"
 
 javacOptions += "-Xlint:unchecked"
 
+assemblyJarName in assembly := "linegraphcurveseparation.jar"
+
+mainClass in assembly := Some("edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.MarkerDetection")
+
+test in assembly := {}
+
 resolvers ++= Seq(
   "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/",
   "Sonatype Shapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
@@ -18,9 +24,6 @@ libraryDependencies ++= Seq(
    //jackson for json
   "org.json4s" %% "json4s-native" % "3.2.11",
   "org.json4s" %% "json4s-jackson" % "3.2.10",
-  // pdf parsing libraries
-  "org.apache.pdfbox"    %  "pdfbox"          %  "1.8.7",
-  "org.apache.tika"      %  "tika-bundle"     %  "1.6",
   // testing
   "org.scalatest"        %% "scalatest"  %  "2.2.4",
   //log4j

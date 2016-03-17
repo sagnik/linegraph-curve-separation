@@ -20,7 +20,7 @@ new/
 verboseresults*
 data/*
 src/resources/test/test/*
-
+logs/
 
 # sbt specific
 .cache/

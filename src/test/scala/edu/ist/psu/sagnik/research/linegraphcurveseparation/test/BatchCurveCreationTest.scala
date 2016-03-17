@@ -8,6 +8,7 @@ import scala.language.postfixOps
 /**
  * Created by sagnik on 3/7/16.
  */
+
 class BatchCurveCreationTest extends FunSpec {
 
   describe("testing the SVG output by printing") {

@@ -18,7 +18,7 @@ object MarkerDetection {
   // square |_|, diamond: , cross: x, plus: +, triangle: /_\
   //
 
-  val MARKERNUMBERTHRESHOLD=5
+  val MARKERNUMBERTHRESHOLD=2
 
   def createsSquare(xs:List[SVGPathCurve])=MarkerHelper.createsSquare(xs.toIndexedSeq)
   def createsStar(xs:List[SVGPathCurve])=MarkerHelper.createsStar(xs.toIndexedSeq)
@@ -27,7 +27,7 @@ object MarkerDetection {
   def createsCross(xs:List[SVGPathCurve])=MarkerHelper.createsCross(xs.toIndexedSeq)
   def createsPlus(xs:List[SVGPathCurve])=MarkerHelper.createsPlus(xs.toIndexedSeq)
   def pathIntersects(p1:SVGPathCurve,p2:SVGPathCurve):Boolean=MarkerHelper.pathIntersects(p1,p2)
-
+  def pathSeqIntersects(p1s:Seq[SVGPathCurve],p2s:Seq[SVGPathCurve]):Int=MarkerHelper.pathSeqIntersects(p1s,p2s)
 
   def markerThresholdReject(xs:List[List[SVGPathCurve]],markerCreationMethod:(List[SVGPathCurve])=>Boolean):(List[List[SVGPathCurve]],List[List[SVGPathCurve]])=
     if (xs.partition(markerCreationMethod(_))._1.length > MARKERNUMBERTHRESHOLD)
@@ -38,15 +38,21 @@ object MarkerDetection {
   def curvePathsforMarker(cps:List[List[SVGPathCurve]],marker:List[SVGPathCurve],noMarkerPoints:Int):List[SVGPathCurve]={
     if (cps.isEmpty||marker.isEmpty) List.empty[SVGPathCurve]
     else {
-      val possibleCurvePathsforMarker = cps.filter(x => x.count(y => marker.exists(pathIntersects(_, y)))>0.7*noMarkerPoints) //the curve passes through at least 80% of the markers
-      if (possibleCurvePathsforMarker.isEmpty) List.empty[SVGPathCurve]
-      else possibleCurvePathsforMarker.sortWith(_.count(y => marker.exists(pathIntersects(_, y)))>_.count(y => marker.exists(pathIntersects(_, y)))).head //paths from this style matches maximally
+      //println(cps.length)
+      //cps.foreach{a=>println(a.length,pathSeqIntersects(a,marker))}
+      //println("------------------")
+      cps.sortWith(pathSeqIntersects(_,marker)>pathSeqIntersects(_,marker)).head
+      //val possibleCurvePathsforMarker = cps.filter(_.count(y => marker.exists(pathIntersects(_, y)))>0.7*noMarkerPoints) //the curve passes through at least 70% of the markers
+      //if (possibleCurvePathsforMarker.isEmpty) List.empty[SVGPathCurve]
+      //else possibleCurvePathsforMarker.sortWith(_.count(y => marker.exists(pathIntersects(_, y)))>_.count(y => marker.exists(pathIntersects(_, y)))).head //paths from this style matches maximally
     }
   }
 
 
   def apply(curvePaths:Seq[SVGPathCurve])={
     /******* markers that are combination of four paths: squares, stars and diamonds ******/
+
+
     val fourPaths=new Combination[SVGPathCurve].combinationTL[SVGPathCurve](
       4,
       1,
@@ -94,7 +100,9 @@ object MarkerDetection {
       trianglePaths.flatten.distinct++
       crossPaths.flatten.distinct++plusPaths.flatten.distinct)
 
-    val restPathsforMarkerCurveByStyle=restPathsforMarkerCurve.groupBy(_.pathStyle).map(_._2.toList).toList 
+    val restPathsforMarkerCurveByStyle=restPathsforMarkerCurve.groupBy(_.pathStyle).map(_._2.toList).toList
+
+    //SVGWriter(plusPaths.flatten.distinct,"src/test/resources/10.1.1.152.1889-Figure-4.svg","test")
 
     val markerCurveDictionary=Map(
       "square" -> (sqPaths.flatten.distinct ++ curvePathsforMarker(restPathsforMarkerCurveByStyle,sqPaths.flatten.distinct,sqPaths.length)),
@@ -124,7 +132,7 @@ object MarkerDetection {
         val restCrossInterSections=rest.filter(x=>crossPaths.flatten.distinct.exists(pathIntersects(_,x))).groupBy(_.pathStyle).map(_._2).toIndexedSeq.sortWith(_.length>_.length)(0)
     */
 
-    markerBasedCurves++restCurves
+    markerBasedCurves ++ restCurves
   }
 
   def apply(loc:String,createImages:Boolean):Unit={
@@ -176,6 +184,9 @@ object MarkerDetection {
 
 
   def main(args: Array[String]):Unit= {
+    val loc= if (args.nonEmpty)
+      args.head
+    else
     //val loc="data/10.1.1.100.3286-Figure-9.svg"
     //val loc="data/10.1.1.104.3077-Figure-1.svg"
     //val loc="data/10.1.1.105.5053-Figure-2.svg"
@@ -185,7 +196,11 @@ object MarkerDetection {
     //val loc="src/test/resources/10.1.1.108.5575-Figure-16.svg"
     //val loc="src/test/resources/10.1.1.113.223-Figure-10.svg"
     //val loc="src/test/resources/10.1.1.100.3286-Figure-9.svg"
-    val loc="src/test/resources/10.1.1.113.4715-Figure-2.svg"
+    //val loc="src/test/resources/10.1.1.113.4715-Figure-2.svg"
+    //val loc="src/test/resources/10.1.1.159.7551-Figure-6.svg"
+    //"src/test/resources/10.1.1.160.6544-Figure-4.svg"
+   "src/test/resources/10.1.1.152.1889-Figure-4.svg"
+
     MarkerDetection(loc,true)
 
   }

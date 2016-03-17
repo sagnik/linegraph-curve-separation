@@ -33,7 +33,7 @@ object SeparateAxesGridTickPaths {
       ).flatten
 
     val (tics,curvePaths)=others.partition(x=>
-      (x.svgPath.bb match{ case Some(bb)=>(bb.x1==bb.x2 ||bb.y1==bb.y2); case _ => false}) &&
+      //(x.svgPath.bb match{ case Some(bb)=>(bb.x1==bb.x2 ||bb.y1==bb.y2); case _ => false}) &&
         (x.svgPath.bb match{ case Some(bb)=>(bb.x2-bb.x1<TMTHRESHOLD && bb.y2-bb.y1<TMTHRESHOLD); case _ => false}) &&
         axes.exists(a=>pathOverlap(x,a))
     )
