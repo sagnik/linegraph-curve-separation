@@ -1,6 +1,6 @@
 package edu.ist.psu.sagnik.research.linegraphcurveseparation.test
 
-import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{SplitPaths, MarkerDetection, CreateCurves}
+import edu.ist.psu.sagnik.research.linegraphcurveseparation.impl.{SplitPaths, MarkerDetection}
 import org.scalatest.FunSpec
 
 import java.io.File

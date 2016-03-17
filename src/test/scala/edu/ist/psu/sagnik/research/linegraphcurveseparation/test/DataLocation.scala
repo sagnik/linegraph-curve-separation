@@ -5,5 +5,5 @@ package edu.ist.psu.sagnik.research.linegraphcurveseparation.test
  */
 object DataLocation {
   val svgFileLoc= "data/10.1.1.108.9317-Figure-4.svg"
-  val svgDirLoc="/home/sagnik/codes/linegraphcurveseparation/data/bw/"
+  val svgDirLoc="/home/szr163/codes/linegraphcurveseparation/data/bw/"
 }

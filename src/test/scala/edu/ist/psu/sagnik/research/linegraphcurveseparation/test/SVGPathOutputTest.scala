@@ -12,7 +12,7 @@ class SVGPathOutputTest extends FunSpec {
   describe("testing the SVG output by printing") {
     import edu.ist.psu.sagnik.research.linegraphcurveseparation.test.DataLocation._
     it("should print the path info.") {
-      val results=SVGPathExtract(svgFileLoc)
+      val results=SVGPathExtract(svgFileLoc,true)
       //results.foreach(x=>println(x.pContent))
 
 
